@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaffi Kultour Hirzel – Checkliste</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f0efe8; color: #1a1a18;
+    min-height: 100vh; padding: 1.25rem 1rem 3rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .header {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border-radius: 14px;
+    border: 0.5px solid #dddbd2;
+    padding: 1rem 1.25rem; margin-bottom: 1rem;
+  }
+  .logo {
+    width: 48px; height: 48px; background: #1a6b52; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .header h1 { font-size: 17px; font-weight: 700; }
+  .header p { font-size: 13px; color: #666; margin-top: 2px; }
+
+  .alert {
+    background: #fff8e6; border-left: 3px solid #e59a00;
+    border-radius: 10px; padding: 0.7rem 1rem;
+    font-size: 13px; color: #7a5500;
+    margin-bottom: 1rem; line-height: 1.5;
+  }
+  .alert strong { font-weight: 700; }
+
+  /* Global progress card */
+  .prog-card {
+    background: #fff; border-radius: 14px; border: 0.5px solid #dddbd2;
+    padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+  }
+  .prog-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .prog-text { font-size: 13px; color: #555; }
+  .prog-num { font-size: 22px; font-weight: 700; color: #1a6b52; }
+  .prog-bar { background: #e0ded6; border-radius: 999px; height: 8px; overflow: hidden; }
+  .prog-fill { background: #1a6b52; height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+
+  /* Phase blocks */
+  details {
+    background: #fff; border-radius: 14px;
+    border: 0.5px solid #dddbd2;
+    margin-bottom: 0.75rem; overflow: hidden;
+  }
+  summary {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.85rem 1rem;
+    cursor: pointer; user-select: none; list-style: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  .ph-icon { font-size: 20px; flex-shrink: 0; }
+  .ph-info { flex: 1; min-width: 0; }
+  .ph-title { font-size: 14px; font-weight: 600; display: block; }
+
+  /* Mini progress bar inside summary */
+  .ph-prog-wrap { margin-top: 4px; display: flex; align-items: center; gap: 7px; }
+  .ph-prog-bar { flex: 1; background: #e0ded6; border-radius: 999px; height: 5px; overflow: hidden; }
+  .ph-prog-fill { background: #1a6b52; height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+  .ph-prog-label { font-size: 11px; color: #888; white-space: nowrap; }
+  .ph-prog-label.all-done { color: #1a6b52; font-weight: 600; }
+
+  .chevron { font-size: 13px; color: #aaa; flex-shrink: 0; transition: transform 0.2s; display: inline-block; }
+  details[open] .chevron { transform: rotate(180deg); }
+  details[open] summary { border-bottom: 0.5px solid #eeecea; }
+
+  .task-list { padding: 0.25rem 1rem 0.75rem; }
+  .task {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 9px 0; border-bottom: 0.5px solid #f0efe8;
+  }
+  .task:last-child { border-bottom: none; }
+
+  /* Custom checkbox */
+  .task input[type=checkbox] { display: none; }
+  .check-box {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 1.5px solid #c8c6be; background: #fff;
+    flex-shrink: 0; margin-top: 1px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 12px; color: transparent;
+  }
+  .task input[type=checkbox]:checked + .check-box {
+    background: #1a6b52; border-color: #1a6b52; color: #fff;
+  }
+  .task label {
+    font-size: 14px; line-height: 1.5; cursor: pointer;
+    transition: color 0.15s;
+    display: flex; align-items: flex-start; gap: 0; flex: 1;
+  }
+  .task.imp .task-text { font-weight: 600; }
+  .task.done .task-text { color: #b0aea6; text-decoration: line-through; }
+
+  /* Bottom buttons */
+  .btn-row { display: flex; gap: 10px; margin-top: 1.25rem; }
+  .btn {
+    font-family: inherit; font-size: 14px; cursor: pointer;
+    padding: 11px 18px; border-radius: 10px;
+    border: 0.5px solid #c8c6be; background: #fff; color: #333;
+    font-weight: 500;
+  }
+  .btn.danger { color: #c0392b; border-color: #f5c6c6; background: #fff8f8; }
+  .btn.primary { background: #1a6b52; color: #fff; border-color: #1a6b52; flex: 1; font-weight: 600; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    details, .task-list { display: block !important; }
+    summary { border-bottom: 0.5px solid #eee !important; }
+    .btn-row, .prog-card { display: none; }
+    .ph-prog-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">☕</div>
+    <div>
+      <h1>Kaffi Kultour Hirzel</h1>
+      <p>Checkliste · Tel. 044 729 81 04</p>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>Wichtig:</strong> Kasse nie alleine lassen · Schlüssel immer im Schloss · Trinkgeld ins rote Kässeli · Gemeinschaftshaus immer am Ende abschliessen
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-top">
+      <span class="prog-text">Gesamtfortschritt</span>
+      <span class="prog-num" id="prog-num">0 / 0</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Phases injected by JS -->
+  <div id="phases"></div>
+
+  <div class="btn-row">
+    <button class="btn danger" onclick="resetAll()">↺ Zurücksetzen</button>
+    <button class="btn primary" onclick="window.print()">🖨 Drucken</button>
+  </div>
+
+</div>
+<script>
+const KEY = "kaffi_v3";
+
+const phases = [
+  { id:"vor-bw", icon:"🚪", title:"Vor Arbeitsbeginn – Bauwagen", tasks:[
+    {id:"b1",  text:"Alle Fenster öffnen zum Lüften"},
+    {id:"b2",  text:"Kaffeemaschine einschalten & Tank mit Evian (ohne Gas) befüllen"},
+    {id:"b3",  text:"Getränke- und Kaffeebohnenbestand kontrollieren (inkl. Milch & Hafermilch)"},
+    {id:"b4",  text:"Kühlschränke mit Getränken auffüllen (aus dem Bistro)"},
+    {id:"b5",  text:"Eistee holen: ¾ Tee + Apfelsaft auffüllen, Zitronenschnitze & Eiswürfel dazu"},
+    {id:"b6",  text:"3 Iced-Coffee-Flaschen vorbereiten (French Press, mahlen, kühlen/einfrieren)"},
+    {id:"b7",  text:"Kaffeebohnen auf halbvoll auffüllen"},
+    {id:"b8",  text:"Glacé und Eiswürfel kontrollieren & auffüllen"},
+    {id:"b9",  text:"Chips prüfen & auffüllen"},
+    {id:"b10", text:"Kuchen / Nussgipfel / Gipfeli / Focaccia aus Bistro holen & unter Glasglocke platzieren"},
+    {id:"b11", text:"Kleines Kägi neben Kaffeemaschine bereitstellen (zu jedem Kaffee 1 Kägi)"},
+    {id:"b12", text:"Kasse bei Marina Maio abholen, Kassenstock zählen, Post-it ausfüllen & Kasse einschliessen", imp:true},
+    {id:"b13", text:"TWINT-Codes aufstellen, Zuckerportionen & Servietten rüsten, rotes Kaffikässeli hinstellen"},
+    {id:"b14", text:"Zitronen- & Orangenscheiben schneiden, Erdbeeren halbieren (Rest als Dekoration)"},
+    {id:"b15", text:"Minze waschen & vorbereiten"},
+    {id:"b16", text:"Beide Wassertanks am Brunnen mit Frischwasser auffüllen"},
+    {id:"b17", text:"Saubere Lappen bereitlegen (Schrank unter Kasse)"},
+    {id:"b18", text:"Tagesangebot / Tafel aktualisieren (falls nötig)"},
+    {id:"b19", text:"JBL Partybox einschalten & Spotify starten"},
+  ]},
+  { id:"vor-d", icon:"☀️", title:"Vor Arbeitsbeginn – Draussen", tasks:[
+    {id:"d1", text:"Tische & Stühle aufstellen (1 Tisch auf Bühne rechts, Rest auf Kiesplatz)"},
+    {id:"d2", text:"Sonnenschirme aufstellen (bei Bedarf)"},
+    {id:"d3", text:"Abräumstation einrichten"},
+    {id:"d4", text:"Kleinen Eimer mit Wasser & Lappen bereitstellen"},
+    {id:"d5", text:"Behälter für Gläser & Eimer für Müll bereitstellen, alle Eimer mit Abfallsäcken"},
+    {id:"d6", text:"Aschenbecher bereitstellen (optional, im Schrank unter Kasse)"},
+    {id:"d7", text:"Gemeinschaftshaus aufschliessen & WC kontrollieren (Code auf Post-it unter Kasse)"},
+    {id:"d8", text:"WC-Papier, Seife & Papierhandtücher kontrollieren"},
+  ]},
+  { id:"abend", icon:"🕖", title:"Abenddienst (ab 19:30 Uhr)", tasks:[
+    {id:"a1", text:"Kleine Kerzen auf Tischen verteilen & anzünden"},
+    {id:"a2", text:"Strobo, Lichter & BAR-Licht im Wagen einschalten"},
+    {id:"a3", text:"Draussen: Lichterketten & COFFEE-Schild einschalten"},
+    {id:"a4", text:"Feuerschale anzünden (Holz im Holzhüsli) – optional"},
+  ]},
+  { id:"zwischen", icon:"🔄", title:"Schichtwechsel / Zwischendurch", tasks:[
+    {id:"z1", text:"Getränke & Kaffeebohnen auffüllen"},
+    {id:"z2", text:"Eiswürfel & Glacé auffüllen"},
+    {id:"z3", text:"Toiletten kontrollieren, bei Bedarf reinigen"},
+    {id:"z4", text:"Abräumstation aufräumen"},
+    {id:"z5", text:"Lappen wechseln"},
+    {id:"z6", text:"Schmutziges Geschirr ins Bistro bringen & sauberes holen"},
+    {id:"z7", text:"Kuchenbestand prüfen, bei Bedarf nachorganisieren"},
+    {id:"z8", text:"Besondere Vorkommnisse an nächste Schicht weitergeben"},
+  ]},
+  { id:"ende-bw", icon:"🔒", title:"Arbeitsende – Bauwagen", tasks:[
+    {id:"eb1",  text:"Kaffeemaschine ausschalten & reinigen"},
+    {id:"eb2",  text:"Kaffeebohnenbehälter leeren (in durchsichtige Glasflasche)"},
+    {id:"eb3",  text:"Getränke auffüllen"},
+    {id:"eb4",  text:"Alle Oberflächen gründlich reinigen (inkl. Wände, Schranktüren, unter Geräten)"},
+    {id:"eb5",  text:"Mülleimer leeren & ins Bistro bringen; Wäsche in Wäschesack"},
+    {id:"eb6",  text:"Zitronen / Orangen / Minze-Behälter leeren (mitnehmen oder entsorgen)"},
+    {id:"eb7",  text:"Kuchen & schmutziges Geschirr zurück ins Bistro"},
+    {id:"eb8",  text:"Bücherregal kontrollieren & aufräumen, sauberes Geschirr einräumen"},
+    {id:"eb9",  text:"Boden fegen & nass wischen (Teppich rausnehmen & darunter reinigen)"},
+    {id:"eb10", text:"Fenster schliessen – darauf achten, dass alle Fenster gut einrasten!", imp:true},
+    {id:"eb11", text:"Kasse abrechnen: Betrag / Datum / Zeit / Unterschrift auf Post-it → ins Bistro (Büro Marina Maio)", imp:true},
+    {id:"eb12", text:"Musik & Licht ausschalten"},
+    {id:"eb13", text:"Bauwagen abschliessen & Schlüssel in Schlüsselbox", imp:true},
+  ]},
+  { id:"ende-d", icon:"🌙", title:"Arbeitsende – Draussen", tasks:[
+    {id:"ed1",  text:"Alle Tische abwischen"},
+    {id:"ed2",  text:"Tische & Stühle zusammenklappen & hinter dem Wagen beim Grill verstauen"},
+    {id:"ed3",  text:"Sonnenschirme & Ständer unter dem Wagen verstauen"},
+    {id:"ed4",  text:"Gelände auf Abfall kontrollieren, Sandkasten checken"},
+    {id:"ed5",  text:"Bühne mit Besen kehren"},
+    {id:"ed6",  text:"Mülleimer leeren & zum Bistro bringen"},
+    {id:"ed7",  text:"Abräumstation zusammenräumen"},
+    {id:"ed8",  text:"Feuer mit Wasser löschen; Asche separat in Müllsack (Brandgefahr!) – draussen stehen lassen", imp:true},
+    {id:"ed9",  text:"Abwassertank komplett leeren (in Toilette), kurz ausspülen & wieder installieren"},
+    {id:"ed10", text:"Toiletten reinigen, WC-Papier & Handtücher auffüllen, Abfallkörbe leeren"},
+    {id:"ed11", text:"Gemeinschaftshaus abschliessen & Schlüssel in Codebox", imp:true},
+  ]},
+  { id:"woech", icon:"📅", title:"Wöchentliche Reinigung", tasks:[
+    {id:"w1", text:"Kühlschrank reinigen"},
+    {id:"w2", text:"Fenster reinigen"},
+    {id:"w3", text:"Kaffeemaschine entkalken (bei Bedarf)"},
+    {id:"w4", text:"Regale auswischen"},
+    {id:"w5", text:"Getränkelager aufräumen"},
+    {id:"w6", text:"Glasbestand kontrollieren"},
+    {id:"w7", text:"Müllcontainer reinigen"},
+    {id:"w8", text:"Boden unter Möbeln reinigen"},
+  ]},
+  { id:"monat", icon:"📊", title:"Monatskontrolle (Vorstand)", tasks:[
+    {id:"m1", text:"Getränkeinventur durchführen & Nachbestellliste erstellen"},
+    {id:"m2", text:"Verbrauchsmaterial zählen (Servietten, Cups to go, Röhrli, Kerzen usw.)"},
+    {id:"m3", text:"Ablaufdaten kontrollieren"},
+    {id:"m4", text:"Reinigungsmaterial auffüllen"},
+  ]},
+];
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+// Build DOM
+const container = document.getElementById("phases");
+phases.forEach((p, pi) => {
+  const det = document.createElement("details");
+  if (pi === 0) det.open = true;
+  det.innerHTML = `
+    <summary>
+      <span class="ph-icon">${p.icon}</span>
+      <span class="ph-info">
+        <span class="ph-title">${p.title}</span>
+        <span class="ph-prog-wrap">
+          <span class="ph-prog-bar"><span class="ph-prog-fill" id="pf-${p.id}" style="width:0%"></span></span>
+          <span class="ph-prog-label" id="pl-${p.id}">0 / ${p.tasks.length}</span>
+        </span>
+      </span>
+      <span class="chevron">▾</span>
+    </summary>
+    <div class="task-list">
+      ${p.tasks.map(t => `
+        <div class="task${t.imp ? " imp" : ""}" id="row-${t.id}">
+          <label for="cb-${t.id}">
+            <input type="checkbox" id="cb-${t.id}" data-id="${t.id}">
+            <span class="check-box">✓</span>
+            <span class="task-text" style="margin-left:8px">${t.text}</span>
+          </label>
+        </div>`).join("")}
+    </div>`;
+  container.appendChild(det);
+});
+
+function updateUI() {
+  const allIds = phases.flatMap(p => p.tasks.map(t => t.id));
+  let total = allIds.length, done = 0;
+
+  phases.forEach(p => {
+    let pDone = 0;
+    p.tasks.forEach(t => {
+      const cb = document.getElementById("cb-" + t.id);
+      const row = document.getElementById("row-" + t.id);
+      if (!cb || !row) return;
+      const checked = !!state[t.id];
+      cb.checked = checked;
+      row.classList.toggle("done", checked);
+      if (checked) { pDone++; done++; }
+    });
+    const pct = Math.round(pDone / p.tasks.length * 100);
+    const fill = document.getElementById("pf-" + p.id);
+    const lbl  = document.getElementById("pl-" + p.id);
+    if (fill) fill.style.width = pct + "%";
+    if (lbl) {
+      lbl.textContent = pDone + " / " + p.tasks.length;
+      lbl.className = "ph-prog-label" + (pDone === p.tasks.length ? " all-done" : "");
+    }
+  });
+
+  document.getElementById("prog-num").textContent = done + " / " + total;
+  document.getElementById("prog-fill").style.width = Math.round(done / total * 100) + "%";
+}
+
+document.getElementById("phases").addEventListener("change", e => {
+  if (e.target.type !== "checkbox") return;
+  const id = e.target.dataset.id;
+  state[id] = e.target.checked;
+  save();
+  updateUI();
+});
+
+function resetAll() {
+  if (!confirm("Wirklich alle Häkchen entfernen?")) return;
+  state = {}; save(); updateUI();
+}
+
+updateUI();
+</script>
+</body>
+</html>

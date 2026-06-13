@@ -3,39 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kaffi Kultour Hirzel – Checkliste</title>
+<title>Kaffi Kultour Hirzel</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     background: #f0efe8; color: #1a1a18;
-    min-height: 100vh; padding: 1.25rem 1rem 3rem;
+    min-height: 100vh; padding: 0 0 3rem;
     -webkit-tap-highlight-color: transparent;
   }
-  .container { max-width: 680px; margin: 0 auto; }
+  .container { max-width: 680px; margin: 0 auto; padding: 0 1rem; }
 
-  /* Header */
-  .header {
-    display: flex; align-items: center; gap: 14px;
-    background: #fff; border-radius: 14px;
-    border: 0.5px solid #dddbd2;
-    padding: 1rem 1.25rem; margin-bottom: 1rem;
+  /* Sticky top bar */
+  #top-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #1a6b52;
+    padding: 0.7rem 1rem;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.15);
   }
-  .logo {
-    width: 48px; height: 48px; background: #1a6b52; border-radius: 10px;
+  #top-bar .logo {
+    width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
+    font-size: 18px; flex-shrink: 0;
   }
-  .header h1 { font-size: 17px; font-weight: 600; }
-  .header p { font-size: 13px; color: #666; margin-top: 2px; }
+  #top-bar .top-title { flex: 1; }
+  #top-bar h1 { font-size: 15px; font-weight: 600; color: #fff; }
+  #top-bar p { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+  .lang-switcher { display: flex; gap: 4px; flex-shrink: 0; }
+  .lang-btn {
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    padding: 5px 9px; border-radius: 7px; cursor: pointer;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    background: transparent; color: rgba(255,255,255,0.7);
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .lang-btn.active { background: #fff; color: #1a6b52; border-color: #fff; }
 
-  /* Role picker screen */
+  .page-content { padding-top: 1rem; }
+
+  /* Role screen */
   #role-screen {
     background: #fff; border-radius: 14px; border: 0.5px solid #dddbd2;
     padding: 1.25rem; margin-bottom: 1rem;
   }
   #role-screen h2 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  #role-screen p { font-size: 13px; color: #666; margin-bottom: 1rem; }
+  #role-screen p.role-sub { font-size: 13px; color: #666; margin-bottom: 1rem; }
   .role-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
   .role-card {
     display: flex; align-items: center; gap: 12px;
@@ -64,12 +77,11 @@
   }
   .start-btn.active { opacity: 1; pointer-events: auto; }
 
-  /* Active role bar */
+  /* Role bar */
   #role-bar {
-    display: none;
-    background: #e8f5ef; border-radius: 10px; border: 0.5px solid #9fd4b8;
-    padding: 0.6rem 1rem; margin-bottom: 1rem;
-    font-size: 13px; color: #0f5c3a;
+    display: none; background: #e8f5ef; border-radius: 10px;
+    border: 0.5px solid #9fd4b8; padding: 0.6rem 1rem;
+    margin-bottom: 1rem; font-size: 13px; color: #0f5c3a;
     align-items: center; gap: 8px; flex-wrap: wrap;
   }
   #role-bar span { flex: 1; }
@@ -79,7 +91,6 @@
     padding: 4px 10px; cursor: pointer;
   }
 
-  /* Main content (hidden until roles chosen) */
   #main-content { display: none; }
 
   /* Progress */
@@ -94,17 +105,8 @@
   .prog-fill { background: #1a6b52; height: 100%; border-radius: 999px; transition: width 0.3s ease; }
 
   /* Phase */
-  details.phase {
-    background: #fff; border-radius: 14px;
-    border: 0.5px solid #dddbd2;
-    margin-bottom: 0.75rem; overflow: hidden;
-  }
-  summary.phase-summary {
-    display: flex; align-items: center; gap: 10px;
-    padding: 0.85rem 1rem;
-    cursor: pointer; user-select: none; list-style: none;
-    -webkit-tap-highlight-color: transparent;
-  }
+  details.phase { background: #fff; border-radius: 14px; border: 0.5px solid #dddbd2; margin-bottom: 0.75rem; overflow: hidden; }
+  summary.phase-summary { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem; cursor: pointer; user-select: none; list-style: none; -webkit-tap-highlight-color: transparent; }
   summary.phase-summary::-webkit-details-marker { display: none; }
   .ph-icon { font-size: 20px; flex-shrink: 0; }
   .ph-info { flex: 1; min-width: 0; }
@@ -120,17 +122,8 @@
   .phase-body { padding: 0.5rem 0.75rem 0.75rem; }
 
   /* Sub */
-  details.sub {
-    border-radius: 10px; border: 0.5px solid #e8e6de;
-    margin-bottom: 0.5rem; overflow: hidden; background: #fafaf7;
-  }
-  summary.sub-summary {
-    display: flex; align-items: center; gap: 8px;
-    padding: 0.6rem 0.75rem;
-    cursor: pointer; user-select: none; list-style: none;
-    font-size: 13px; font-weight: 500; color: #444;
-    -webkit-tap-highlight-color: transparent;
-  }
+  details.sub { border-radius: 10px; border: 0.5px solid #e8e6de; margin-bottom: 0.5rem; overflow: hidden; background: #fafaf7; }
+  summary.sub-summary { display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.75rem; cursor: pointer; user-select: none; list-style: none; font-size: 13px; font-weight: 500; color: #444; -webkit-tap-highlight-color: transparent; }
   summary.sub-summary::-webkit-details-marker { display: none; }
   .sub-icon { font-size: 15px; flex-shrink: 0; }
   .sub-info { flex: 1; }
@@ -142,46 +135,25 @@
   .sub-body { padding: 0.25rem 0.75rem 0.6rem; }
 
   /* Tasks */
-  .task {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 8px 0; border-bottom: 0.5px solid #f0efe8;
-  }
+  .task { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid #f0efe8; }
   .task:last-child { border-bottom: none; }
   .task input[type=checkbox] { display: none; }
-  .check-box {
-    width: 20px; height: 20px; border-radius: 6px;
-    border: 1.5px solid #c8c6be; background: #fff;
-    flex-shrink: 0; margin-top: 1px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-    font-size: 12px; color: transparent;
-  }
+  .check-box { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #c8c6be; background: #fff; flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; font-size: 12px; color: transparent; }
   .task input[type=checkbox]:checked + .check-box { background: #1a6b52; border-color: #1a6b52; color: #fff; }
   .task label { font-size: 13.5px; line-height: 1.5; cursor: pointer; flex: 1; display: flex; align-items: flex-start; }
   .task-text { flex: 1; margin-left: 8px; }
   .task.imp .task-text { font-weight: 500; }
   .task.done .task-text { color: #b0aea6; text-decoration: line-through; }
 
-  /* Recipe card */
-  .recipe-card {
-    background: #f5f4f0; border-radius: 10px; border: 0.5px solid #dddbd2;
-    padding: 0.75rem 1rem; margin-top: 0.5rem; font-size: 13px; line-height: 1.6; color: #333;
-  }
+  /* Recipe */
+  .recipe-card { background: #f5f4f0; border-radius: 10px; border: 0.5px solid #dddbd2; padding: 0.75rem 1rem; margin-top: 0.5rem; font-size: 13px; line-height: 1.6; color: #333; }
   .recipe-card strong { font-weight: 500; color: #1a6b52; display: block; margin-bottom: 4px; }
   .recipe-card ol { padding-left: 1.2rem; }
   .recipe-card li { margin-bottom: 3px; }
 
   /* Info section */
-  details.info-section {
-    background: #fff; border-radius: 14px;
-    border: 0.5px solid #dddbd2;
-    margin-bottom: 0.75rem; overflow: hidden;
-  }
-  summary.info-summary {
-    display: flex; align-items: center; gap: 10px;
-    padding: 0.85rem 1rem;
-    cursor: pointer; user-select: none; list-style: none;
-  }
+  details.info-section { background: #fff; border-radius: 14px; border: 0.5px solid #dddbd2; margin-bottom: 0.75rem; overflow: hidden; }
+  summary.info-summary { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem; cursor: pointer; user-select: none; list-style: none; }
   summary.info-summary::-webkit-details-marker { display: none; }
   summary.info-summary::after { content: "▾"; font-size: 13px; color: #a07820; margin-left: auto; }
   details.info-section[open] > summary.info-summary { border-radius: 10px 10px 0 0; }
@@ -194,134 +166,133 @@
   .btn.primary { background: #1a6b52; color: #fff; border-color: #1a6b52; flex: 1; font-weight: 500; }
 
   @media print {
-    body { background: #fff; padding: 0; }
+    #top-bar { position: static; }
     #role-screen, #role-bar { display: none !important; }
     #main-content { display: block !important; }
     details, .sub-body, .phase-body { display: block !important; }
-    .btn-row { display: none; }
+    .btn-row, .lang-switcher { display: none; }
   }
 </style>
 </head>
 <body>
+
+<!-- Sticky top bar -->
+<div id="top-bar">
+  <div class="logo">☕</div>
+  <div class="top-title">
+    <h1>Kaffi Kultour Hirzel</h1>
+    <p id="top-sub">Checkliste · Bistro: 044 729 81 04</p>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="de">Deutsch</button>
+    <button class="lang-btn" data-lang="en">English</button>
+    <button class="lang-btn" data-lang="mn">Монгол</button>
+  </div>
+</div>
+
+<div class="page-content">
 <div class="container">
 
-  <div class="header">
-    <div class="logo">☕</div>
-    <div>
-      <h1>Kaffi Kultour Hirzel</h1>
-      <p>Checkliste · Bistro: 044 729 81 04</p>
-    </div>
-  </div>
-
-  <!-- Rollenauswahl -->
+  <!-- Role screen -->
   <div id="role-screen">
-    <h2>Welche Rolle(n) hast du heute?</h2>
-    <p>Du kannst mehrere auswählen. Die Checkliste wird entsprechend angepasst.</p>
+    <h2 id="rs-title">Welche Rolle(n) hast du heute?</h2>
+    <p class="role-sub" id="rs-sub">Du kannst mehrere auswählen. Die Checkliste wird entsprechend angepasst.</p>
     <div class="role-grid">
       <div class="role-card" data-role="opener" onclick="toggleRole(this)">
         <span class="role-icon">🌤️</span>
         <span class="role-info">
-          <span class="role-title">Nachmittagsschicht</span>
-          <span class="role-desc">Vor Arbeitsbeginn innen & aussen, Schichtwechsel</span>
+          <span class="role-title" id="role-opener-title">Frühschicht</span>
+          <span class="role-desc" id="role-opener-desc">Vor Arbeitsbeginn innen & aussen, Schichtwechsel</span>
         </span>
         <span class="role-check">✓</span>
       </div>
       <div class="role-card" data-role="evening" onclick="toggleRole(this)">
         <span class="role-icon">🌙</span>
         <span class="role-info">
-          <span class="role-title">Abenddienst (ab 19:30)</span>
-          <span class="role-desc">Beleuchtung, Kerzen, Feuerschale, Schichtwechsel, Arbeitsende</span>
+          <span class="role-title" id="role-evening-title">Spätschicht (ab 19:30)</span>
+          <span class="role-desc" id="role-evening-desc">Beleuchtung, Kerzen, Feuerschale, Schichtwechsel, Arbeitsende</span>
         </span>
         <span class="role-check">✓</span>
       </div>
       <div class="role-card" data-role="cleaning" onclick="toggleRole(this)">
         <span class="role-icon">🧹</span>
         <span class="role-info">
-          <span class="role-title">Wöchentliche Reinigung</span>
-          <span class="role-desc">Kühlschrank, Fenster, Regale, Boden unter Möbeln</span>
+          <span class="role-title" id="role-cleaning-title">Wöchentliche Reinigung</span>
+          <span class="role-desc" id="role-cleaning-desc">Kühlschrank, Fenster, Regale, Boden unter Möbeln</span>
         </span>
         <span class="role-check">✓</span>
       </div>
       <div class="role-card" data-role="board" onclick="toggleRole(this)">
         <span class="role-icon">📊</span>
         <span class="role-info">
-          <span class="role-title">Vorstand</span>
-          <span class="role-desc">Monatliche Inventur, Nachbestellung, Ablaufdaten</span>
+          <span class="role-title" id="role-board-title">Vorstand</span>
+          <span class="role-desc" id="role-board-desc">Monatliche Inventur, Nachbestellung, Ablaufdaten</span>
         </span>
         <span class="role-check">✓</span>
       </div>
     </div>
-    <button class="start-btn" id="start-btn" onclick="startChecklist()">Checkliste starten →</button>
+    <button class="start-btn" id="start-btn" data-i18n="start">Checkliste starten →</button>
   </div>
 
-  <!-- Aktive Rollen-Info-Bar -->
+  <!-- Role bar -->
   <div id="role-bar">
     <span id="role-bar-text"></span>
-    <button onclick="changeRoles()">Rollen ändern</button>
+    <button id="change-roles-btn">Rollen ändern</button>
   </div>
 
-  <!-- Hauptinhalt -->
+  <!-- Main content -->
   <div id="main-content">
 
-    <!-- Wichtige Hinweise -->
+    <!-- Warning box -->
     <details class="info-section" style="margin-bottom:0.75rem">
       <summary class="info-summary" style="background:#fff8e6; border-left:3px solid #e59a00; border-radius:10px;">
         <span style="font-size:20px">⚠️</span>
-        <span style="font-size:14px; font-weight:500; color:#7a5500;">Wichtige Hinweise &amp; allgemeine Infos</span>
+        <span id="warn-title" style="font-size:14px; font-weight:500; color:#7a5500;">Wichtige Hinweise &amp; allgemeine Infos</span>
       </summary>
-      <div class="info-body" style="background:#fff8e6; border-left:3px solid #e59a00; border-radius:0 0 10px 10px; color:#5a3e00;">
-        <details class="sub" style="margin-bottom:0.5rem; background:#fff3d0; border-color:#e8c97a;">
-          <summary class="sub-summary" style="color:#6b4a00;"><span class="sub-icon">🚨</span> Immer beachten <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
-          <div class="sub-body" style="background:#fff3d0;">
-            <ul style="padding-left:1rem; line-height:1.7; color:#5a3e00; margin-top:4px;">
-              <li>Kasse nie alleine lassen – immer in der Schublade eingeschlossen</li>
-              <li>Schlüssel immer im Schlüsselloch stecken lassen</li>
-              <li>Den Wagen niemals ganz alleine lassen</li>
-              <li>Gemeinschaftshaus immer am Ende abschliessen</li>
-            </ul>
+      <div class="info-body" style="background:#fff8e6; border-left:3px solid #e59a00; border-radius:0 0 10px 10px; color:#5a3e00; padding:0.75rem 1rem;">
+
+        <div class="warn-section" style="margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:0.5px solid #e8c97a;">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#6b4a00; margin-bottom:5px;">
+            <span>🚨</span> <span id="warn-always-title">Immer beachten</span>
           </div>
-        </details>
-        <details class="sub" style="margin-bottom:0.5rem; background:#fff3d0; border-color:#e8c97a;">
-          <summary class="sub-summary" style="color:#6b4a00;"><span class="sub-icon">🧾</span> Kasse &amp; Trinkgeld <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
-          <div class="sub-body" style="background:#fff3d0;">
-            <ul style="padding-left:1rem; line-height:1.7; color:#5a3e00; margin-top:4px;">
-              <li>Trinkgeld (inkl. TWINT) immer ins rote Kässeli legen</li>
-              <li>Rotes Kässeli am Ende im grünen Schränkli einschliessen – wird später abgerechnet</li>
-            </ul>
+          <ul id="warn-always-list" style="padding-left:1.2rem; line-height:1.7; color:#5a3e00; font-size:13px;"></ul>
+        </div>
+
+        <div class="warn-section" style="margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:0.5px solid #e8c97a;">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#6b4a00; margin-bottom:5px;">
+            <span>🧾</span> <span id="warn-cash-title">Kasse &amp; Trinkgeld</span>
           </div>
-        </details>
-        <details class="sub" style="margin-bottom:0.5rem; background:#fff3d0; border-color:#e8c97a;">
-          <summary class="sub-summary" style="color:#6b4a00;"><span class="sub-icon">🧊</span> Kühlschrank <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
-          <div class="sub-body" style="background:#fff3d0;">
-            <ul style="padding-left:1rem; line-height:1.7; color:#5a3e00; margin-top:4px;">
-              <li>Weisser Kühlschrank immer fest zudrücken (schliesst schlecht!)</li>
-            </ul>
+          <ul id="warn-cash-list" style="padding-left:1.2rem; line-height:1.7; color:#5a3e00; font-size:13px;"></ul>
+        </div>
+
+        <div class="warn-section" style="margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:0.5px solid #e8c97a;">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#6b4a00; margin-bottom:5px;">
+            <span>🧊</span> <span id="warn-fridge-title">Kühlschrank</span>
           </div>
-        </details>
-        <details class="sub" style="margin-bottom:0.5rem; background:#fff3d0; border-color:#e8c97a;">
-          <summary class="sub-summary" style="color:#6b4a00;"><span class="sub-icon">🏖️</span> Sandkasten <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
-          <div class="sub-body" style="background:#fff3d0;">
-            <ul style="padding-left:1rem; line-height:1.7; color:#5a3e00; margin-top:4px;">
-              <li>Keine Überschwemmungen zulassen</li>
-              <li>Eltern darauf aufmerksam machen, dass alles anständig hinterlassen wird</li>
-            </ul>
+          <ul id="warn-fridge-list" style="padding-left:1.2rem; line-height:1.7; color:#5a3e00; font-size:13px;"></ul>
+        </div>
+
+        <div class="warn-section" style="margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:0.5px solid #e8c97a;">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#6b4a00; margin-bottom:5px;">
+            <span>🏖️</span> <span id="warn-sand-title">Sandkasten</span>
           </div>
-        </details>
-        <details class="sub" style="background:#fff3d0; border-color:#e8c97a;">
-          <summary class="sub-summary" style="color:#6b4a00;"><span class="sub-icon">📦</span> Nachbestellungen <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
-          <div class="sub-body" style="background:#fff3d0;">
-            <ul style="padding-left:1rem; line-height:1.7; color:#5a3e00; margin-top:4px;">
-              <li>Wenn etwas ausgeht → Notiz schreiben, damit nachbestellt werden kann</li>
-            </ul>
+          <ul id="warn-sand-list" style="padding-left:1.2rem; line-height:1.7; color:#5a3e00; font-size:13px;"></ul>
+        </div>
+
+        <div class="warn-section">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#6b4a00; margin-bottom:5px;">
+            <span>📦</span> <span id="warn-reorder-title">Nachbestellungen</span>
           </div>
-        </details>
+          <ul id="warn-reorder-list" style="padding-left:1.2rem; line-height:1.7; color:#5a3e00; font-size:13px;"></ul>
+        </div>
+
       </div>
     </details>
 
-    <!-- Fortschritt -->
+    <!-- Progress -->
     <div class="prog-card">
       <div class="prog-top">
-        <span class="prog-text">Gesamtfortschritt</span>
+        <span class="prog-text" id="prog-text">Gesamtfortschritt</span>
         <span class="prog-num" id="prog-num">0 / 0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
@@ -329,50 +300,35 @@
 
     <div id="phases"></div>
 
-    <!-- Rezepte -->
+    <!-- Recipes -->
     <details class="info-section">
-      <summary class="info-summary"><span style="font-size:20px">🧋</span> <span style="font-size:14px; font-weight:500;">Rezepte</span></summary>
+      <summary class="info-summary"><span style="font-size:20px">🧋</span> <span id="recipes-title" style="font-size:14px; font-weight:500;">Rezepte</span></summary>
       <div class="info-body">
         <details class="sub" style="margin-bottom:0.5rem">
-          <summary class="sub-summary"><span class="sub-icon">☕</span> Iced Coffee – Vorbereitung (3 Flaschen) <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
+          <summary class="sub-summary"><span class="sub-icon">☕</span> <span id="rec1-title">Iced Coffee – Vorbereitung (3 Flaschen)</span> <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
           <div class="sub-body">
             <div class="recipe-card">
-              <strong>Vorbereitung der Flaschen</strong>
-              <ol>
-                <li>Kaffee mahlen</li>
-                <li>Mit Kaffeepulver, French Press und Wasserkocher Kaffee zubereiten</li>
-                <li>In 3 Glasflaschen mit Deckel einfüllen</li>
-                <li>Im weissen Kühlschrank oben ins Gefrierfach legen und kühlen</li>
-              </ol>
-              <div style="margin-top:8px; font-style:italic; color:#666">Kann optional auch im Bistro vorbereitet werden.</div>
+              <strong id="rec1-head">Vorbereitung der Flaschen</strong>
+              <ol id="rec1-steps"></ol>
+              <div id="rec1-note" style="margin-top:8px; font-style:italic; color:#666"></div>
             </div>
           </div>
         </details>
         <details class="sub" style="margin-bottom:0.5rem">
-          <summary class="sub-summary"><span class="sub-icon">🥤</span> Iced Coffee – Servieren (pro Glas) <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
+          <summary class="sub-summary"><span class="sub-icon">🥤</span> <span id="rec2-title">Iced Coffee – Servieren (pro Glas)</span> <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
           <div class="sub-body">
             <div class="recipe-card">
-              <strong>Zubereitung im Pokalglas</strong>
-              <ol>
-                <li>Pokalglas zu 2/3 mit Eis füllen</li>
-                <li>Kaffee dazugeben – bis über die Eiswürfel</li>
-                <li>Mit einem Schluck kalter Milch übergiessen</li>
-                <li>Röhrli rein 🙂</li>
-              </ol>
+              <strong id="rec2-head">Zubereitung im Pokalglas</strong>
+              <ol id="rec2-steps"></ol>
             </div>
           </div>
         </details>
         <details class="sub">
-          <summary class="sub-summary"><span class="sub-icon">🍵</span> Eistee (grosser Getränkespender) <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
+          <summary class="sub-summary"><span class="sub-icon">🍵</span> <span id="rec3-title">Eistee (grosser Getränkespender)</span> <span class="sub-chevron" style="margin-left:auto">▾</span></summary>
           <div class="sub-body">
             <div class="recipe-card">
-              <strong>Zubereitung</strong>
-              <ol>
-                <li>Getränkespender zu ca. ¾ mit Tee füllen</li>
-                <li>Mit Apfelsaft auffüllen</li>
-                <li>Zitronenschnitze dazugeben</li>
-                <li>Eiswürfel dazugeben</li>
-              </ol>
+              <strong id="rec3-head">Zubereitung</strong>
+              <ol id="rec3-steps"></ol>
             </div>
           </div>
         </details>
@@ -380,16 +336,237 @@
     </details>
 
     <div class="btn-row">
-      <button class="btn danger" onclick="resetAll()">↺ Zurücksetzen</button>
-      <button class="btn primary" onclick="window.print()">🖨 Drucken</button>
+      <button class="btn danger" id="reset-btn">↺ Zurücksetzen</button>
+      <button class="btn primary" id="print-btn">🖨 Drucken</button>
     </div>
   </div>
 
 </div>
-<script>
-const KEY = "kaffi_v5";
+</div>
 
-// Rollen → welche Phasen-IDs werden angezeigt
+<script>
+const KEY = "kaffi_v6";
+
+// ─── TRANSLATIONS ────────────────────────────────────────────────────────────
+const i18n = {
+  de: {
+    topSub: "Checkliste · Bistro: 044 729 81 04",
+    rsTitle: "Welche Rolle(n) hast du heute?",
+    rsSub: "Du kannst mehrere auswählen. Die Checkliste wird entsprechend angepasst.",
+    roles: {
+      opener: { title: "Frühschicht", desc: "Vor Arbeitsbeginn innen & aussen, Schichtwechsel" },
+      evening: { title: "Spätschicht (ab 19:30)", desc: "Beleuchtung, Kerzen, Feuerschale, Schichtwechsel, Arbeitsende" },
+      cleaning: { title: "Wöchentliche Reinigung", desc: "Kühlschrank, Fenster, Regale, Boden unter Möbeln" },
+      board: { title: "Vorstand", desc: "Monatliche Inventur, Nachbestellung, Ablaufdaten" },
+    },
+    roleLabels: { opener:"🌤️ Frühschicht", evening:"🌙 Spätschicht", cleaning:"🧹 Wöchentliche Reinigung", board:"📊 Vorstand" },
+    start: "Checkliste starten →",
+    changeRoles: "Rollen ändern",
+    progText: "Gesamtfortschritt",
+    resetBtn: "↺ Zurücksetzen",
+    printBtn: "🖨 Drucken",
+    warnTitle: "Wichtige Hinweise & allgemeine Infos",
+    warnAlways: { title: "Immer beachten", items: ["Kasse nie alleine lassen – immer in der Schublade eingeschlossen","Schlüssel immer im Schlüsselloch stecken lassen","Den Wagen niemals ganz alleine lassen","Gemeinschaftshaus immer am Ende abschliessen"] },
+    warnCash: { title: "Kasse & Trinkgeld", items: ["Trinkgeld (inkl. TWINT) immer ins rote Kässeli legen","Rotes Kässeli am Ende im grünen Schränkli einschliessen – wird später abgerechnet"] },
+    warnFridge: { title: "Kühlschrank", items: ["Weisser Kühlschrank immer fest zudrücken (schliesst schlecht!)"] },
+    warnSand: { title: "Sandkasten", items: ["Keine Überschwemmungen zulassen","Eltern darauf aufmerksam machen, dass alles anständig hinterlassen wird"] },
+    warnReorder: { title: "Nachbestellungen", items: ["Wenn etwas ausgeht → Notiz schreiben, damit nachbestellt werden kann"] },
+    recipesTitle: "Rezepte",
+    rec1: { title:"Iced Coffee – Vorbereitung (3 Flaschen)", head:"Vorbereitung der Flaschen", steps:["Kaffee mahlen","Mit Kaffeepulver, French Press und Wasserkocher Kaffee zubereiten","In 3 Glasflaschen mit Deckel einfüllen","Im weissen Kühlschrank oben ins Gefrierfach legen und kühlen"], note:"Kann optional auch im Bistro vorbereitet werden." },
+    rec2: { title:"Iced Coffee – Servieren (pro Glas)", head:"Zubereitung im Pokalglas", steps:["Pokalglas zu 2/3 mit Eis füllen","Kaffee dazugeben – bis über die Eiswürfel","Mit einem Schluck kalter Milch übergiessen","Röhrli rein 🙂"] },
+    rec3: { title:"Eistee (grosser Getränkespender)", head:"Zubereitung", steps:["Getränkespender zu ca. ¾ mit Tee füllen","Mit Apfelsaft auffüllen","Zitronenschnitze dazugeben","Eiswürfel dazugeben"] },
+    phases: [
+      { id:"vor-bw", icon:"🚪", title:"Vor Arbeitsbeginn – Bauwagen", subs:[
+        { id:"s-lueft", icon:"🪟", title:"Lüften & Grundsetup", tasks:[
+          {id:"b1",text:"Alle Fenster öffnen zum Lüften"},{id:"b2",text:"Kaffeemaschine einschalten & Tank mit Evian Mineral (ohne Gas) befüllen"},{id:"b17",text:"Saubere Lappen bereitlegen (Schrank unter Kasse)"},{id:"b16",text:"Beide Wassertanks am Brunnen mit Frischwasser auffüllen"}]},
+        { id:"s-getr", icon:"🥛", title:"Getränke & Kühlschrank", tasks:[
+          {id:"b3",text:"Getränke- und Kaffeebohnenbestand kontrollieren (inkl. Milch & Hafermilch)"},{id:"b4",text:"Kühlschränke mit Getränken auffüllen (aus dem Bistro)"},{id:"b7",text:"Kaffeebohnen auf halbvoll auffüllen"},{id:"b8",text:"Glacé und Eiswürfel kontrollieren & auffüllen (aus dem Bistro)"},{id:"b9",text:"Chips prüfen & auffüllen (aus dem Bistro)"}]},
+        { id:"s-iced", icon:"🧋", title:"Eistee & Iced Coffee", tasks:[
+          {id:"b5",text:"Eistee holen: Getränkespender ¾ Tee + Apfelsaft, Zitronenschnitze & Eiswürfel"},{id:"b6",text:"3 Iced-Coffee-Flaschen vorbereiten (French Press, mahlen, kühlen/einfrieren)"}]},
+        { id:"s-food", icon:"🍰", title:"Essen & Deko", tasks:[
+          {id:"b10",text:"Kuchen / Nussgipfel / Gipfeli / Focaccia aus Bistro holen & unter Glasglocke platzieren"},{id:"b11",text:"Kleines Kägi neben Kaffeemaschine bereitstellen (zu jedem Kaffee 1 Kägi)"},{id:"b14",text:"Zitronen- & Orangenscheiben schneiden, Erdbeeren halbieren (Rest als Dekoration)"},{id:"b15",text:"Minze waschen & vorbereiten"}]},
+        { id:"s-kasse", icon:"💰", title:"Kasse & Zahlung", tasks:[
+          {id:"b12",imp:true,text:"Kasse bei Marina Maio abholen, Kassenstock zählen, Post-it (Betrag, Datum, Zeit, Unterschrift) in Kasse legen & einschliessen"},{id:"b13",text:"TWINT-Codes aufstellen, Zuckerportionen & Servietten auf Fensterbrett, rotes Kaffikässeli hinstellen"}]},
+        { id:"s-atmo", icon:"🎵", title:"Atmosphäre", tasks:[
+          {id:"b18",text:"Tagesangebot / Tafel aktualisieren (falls nötig)"},{id:"b19",text:"JBL Partybox einschalten & Spotify starten"}]}
+      ]},
+      { id:"vor-d", icon:"☀️", title:"Vor Arbeitsbeginn – Draussen", subs:[
+        { id:"s-moeb", icon:"🪑", title:"Möbel & Einrichtung", tasks:[{id:"d1",text:"Tische & Stühle aufstellen (1 Tisch auf Bühne rechts, Rest auf Kiesplatz)"},{id:"d2",text:"Sonnenschirme aufstellen (bei Bedarf)"},{id:"d6",text:"Aschenbecher bereitstellen (optional, im Schrank unter Kasse)"}]},
+        { id:"s-abr", icon:"🗑️", title:"Abräumstation & Reinigung", tasks:[{id:"d3",text:"Abräumstation einrichten"},{id:"d4",text:"Kleinen Eimer mit Wasser & Lappen bereitstellen"},{id:"d5",text:"Behälter für Gläser & Eimer für Müll bereitstellen, alle Eimer mit Abfallsäcken"}]},
+        { id:"s-wc", icon:"🚻", title:"WC & Gemeinschaftshaus", tasks:[{id:"d7",text:"Gemeinschaftshaus aufschliessen & WC kontrollieren (Code auf Post-it unter Kasse)"},{id:"d8",text:"WC-Papier, Seife & Papierhandtücher kontrollieren"}]}
+      ]},
+      { id:"abend", icon:"🕖", title:"Spätschicht (ab 19:30 Uhr)", subs:[
+        { id:"s-licht", icon:"🕯️", title:"Licht & Atmosphäre", tasks:[{id:"a1",text:"Kleine Kerzen auf Tischen verteilen & anzünden"},{id:"a2",text:"Strobo, Lichter & BAR-Licht im Wagen einschalten"},{id:"a3",text:"Draussen: Lichterketten & COFFEE-Schild einschalten"}]},
+        { id:"s-feuer", icon:"🔥", title:"Feuerschale", tasks:[{id:"a4",text:"Feuerschale anzünden – optional (Holz im Holzhüsli)"}]}
+      ]},
+      { id:"zwischen", icon:"🔄", title:"Schichtwechsel / Zwischendurch", subs:[
+        { id:"s-zn", icon:"🥤", title:"Nachfüllen", tasks:[{id:"z1",text:"Getränke & Kaffeebohnen auffüllen"},{id:"z2",text:"Eiswürfel & Glacé auffüllen"},{id:"z7",text:"Kuchenbestand prüfen, bei Bedarf nachorganisieren"}]},
+        { id:"s-zs", icon:"🧹", title:"Sauberkeit", tasks:[{id:"z3",text:"Toiletten kontrollieren, bei Bedarf reinigen"},{id:"z4",text:"Abräumstation aufräumen"},{id:"z5",text:"Lappen wechseln bei Bedarf"},{id:"z6",text:"Schmutziges Geschirr ins Bistro bringen & sauberes holen"}]},
+        { id:"s-zu", icon:"💬", title:"Übergabe", tasks:[{id:"z8",text:"Besondere Vorkommnisse an nächste Schicht weitergeben"}]}
+      ]},
+      { id:"ende-bw", icon:"🔒", title:"Arbeitsende – Bauwagen", subs:[
+        { id:"s-em", icon:"☕", title:"Kaffeemaschine", tasks:[{id:"eb1",text:"Kaffeemaschine ausschalten & reinigen"},{id:"eb2",text:"Kaffeebohnenbehälter leeren (in durchsichtige Glasflasche)"}]},
+        { id:"s-er", icon:"🧽", title:"Reinigung & Aufräumen", tasks:[{id:"eb4",text:"Alle Oberflächen gründlich reinigen (inkl. Wände, Schranktüren, unter Geräten)"},{id:"eb8",text:"Bücherregal kontrollieren & aufräumen, sauberes Geschirr einräumen"},{id:"eb9",text:"Boden fegen & nass wischen (Teppich rausnehmen & darunter reinigen)"}]},
+        { id:"s-ee", icon:"🗑️", title:"Entsorgung & Rückgabe", tasks:[{id:"eb3",text:"Getränke für nächste Schicht auffüllen"},{id:"eb5",text:"Mülleimer leeren & ins Bistro bringen; Wäsche in Wäschesack"},{id:"eb6",text:"Zitronen / Orangen / Minze-Behälter leeren (mitnehmen oder entsorgen)"},{id:"eb7",text:"Kuchen & schmutziges Geschirr zurück ins Bistro"}]},
+        { id:"s-ea", icon:"🔑", title:"Abschluss & Sicherheit", tasks:[{id:"eb10",imp:true,text:"Fenster schliessen – alle Fenster gut einrasten lassen!"},{id:"eb11",imp:true,text:"Kasse abrechnen: Betrag / Datum / Zeit / Unterschrift auf Post-it → Kasse ins Bistro (Büro Marina Maio)"},{id:"eb12",text:"Musik & Licht ausschalten"},{id:"eb13",imp:true,text:"Bauwagen abschliessen & Schlüssel in Schlüsselbox"}]}
+      ]},
+      { id:"ende-d", icon:"🌙", title:"Arbeitsende – Draussen", subs:[
+        { id:"s-edm", icon:"🪑", title:"Möbel verstauen", tasks:[{id:"ed1",text:"Alle Tische abwischen"},{id:"ed2",text:"Tische & Stühle zusammenklappen & hinter dem Wagen beim Grill verstauen"},{id:"ed3",text:"Sonnenschirme & Ständer unter dem Wagen verstauen"}]},
+        { id:"s-edr", icon:"🧹", title:"Reinigung & Entsorgung", tasks:[{id:"ed4",text:"Gelände auf Abfall kontrollieren, Sandkasten checken"},{id:"ed5",text:"Bühne mit Besen kehren"},{id:"ed6",text:"Mülleimer leeren & zum Bistro bringen"},{id:"ed7",text:"Abräumstation zusammenräumen"}]},
+        { id:"s-edf", icon:"🔥", title:"Feuer & Sicherheit", tasks:[{id:"ed8",imp:true,text:"Feuer mit Wasser löschen; Asche separat in Müllsack (Brandgefahr!) – draussen stehen lassen"}]},
+        { id:"s-edw", icon:"🚻", title:"WC & Abwasser", tasks:[{id:"ed9",text:"Abwassertank komplett leeren (in Toilette), kurz ausspülen & wieder installieren"},{id:"ed10",text:"Toiletten reinigen, WC-Papier & Handtücher auffüllen, Abfallkörbe leeren"},{id:"ed11",imp:true,text:"Gemeinschaftshaus abschliessen & Schlüssel in Codebox"}]}
+      ]},
+      { id:"woech", icon:"📅", title:"Wöchentliche Reinigung", subs:[
+        { id:"s-wall", icon:"🧽", title:"Reinigungsaufgaben", tasks:[{id:"w1",text:"Kühlschrank reinigen"},{id:"w2",text:"Fenster reinigen"},{id:"w3",text:"Kaffeemaschine entkalken (bei Bedarf)"},{id:"w4",text:"Regale auswischen"},{id:"w5",text:"Getränkelager aufräumen"},{id:"w6",text:"Glasbestand kontrollieren"},{id:"w7",text:"Müllcontainer reinigen"},{id:"w8",text:"Boden unter Möbeln reinigen"}]}
+      ]},
+      { id:"monat", icon:"📊", title:"Monatskontrolle (Vorstand)", subs:[
+        { id:"s-minv", icon:"📦", title:"Inventur & Bestellung", tasks:[{id:"m1",text:"Getränkeinventur durchführen & Nachbestellliste erstellen"},{id:"m2",text:"Verbrauchsmaterial zählen (Servietten, Cups to go, Röhrli, Kerzen usw.)"},{id:"m3",text:"Ablaufdaten kontrollieren"},{id:"m4",text:"Reinigungsmaterial auffüllen"}]}
+      ]},
+    ]
+  },
+
+  en: {
+    topSub: "Checklist · Bistro: 044 729 81 04",
+    rsTitle: "What role(s) do you have today?",
+    rsSub: "You can select multiple. The checklist will be adjusted accordingly.",
+    roles: {
+      opener: { title: "Morning Shift", desc: "Before opening indoors & outdoors, shift handover" },
+      evening: { title: "Late Shift (from 19:30)", desc: "Lighting, candles, fire bowl, shift handover, end of shift" },
+      cleaning: { title: "Weekly Cleaning", desc: "Fridge, windows, shelves, floor under furniture" },
+      board: { title: "Board Member", desc: "Monthly inventory, reordering, expiry dates" },
+    },
+    roleLabels: { opener:"🌤️ Morning Shift", evening:"🌙 Late Shift", cleaning:"🧹 Weekly Cleaning", board:"📊 Board" },
+    start: "Start checklist →",
+    changeRoles: "Change roles",
+    progText: "Overall progress",
+    resetBtn: "↺ Reset",
+    printBtn: "🖨 Print",
+    warnTitle: "Important notes & general info",
+    warnAlways: { title: "Always remember", items: ["Never leave the cash register alone – always locked in the drawer","Always leave the key in the lock","Never leave the wagon completely alone","Always lock the community house at the end"] },
+    warnCash: { title: "Cash & Tips", items: ["Always put tips (incl. TWINT) in the red cash box","Lock the red cash box in the green cabinet at the end – will be settled later"] },
+    warnFridge: { title: "Fridge", items: ["Always press the white fridge firmly shut (closes poorly!)"] },
+    warnSand: { title: "Sandbox", items: ["Do not allow flooding","Remind parents to leave everything in a tidy condition"] },
+    warnReorder: { title: "Reorders", items: ["If anything runs out → write a note so it can be reordered"] },
+    recipesTitle: "Recipes",
+    rec1: { title:"Iced Coffee – Preparation (3 bottles)", head:"Preparing the bottles", steps:["Grind coffee","Prepare coffee using coffee powder, French press and kettle","Fill into 3 glass bottles with lids","Place in the top freezer compartment of the white fridge to cool"], note:"Can optionally be prepared at the Bistro." },
+    rec2: { title:"Iced Coffee – Serving (per glass)", head:"Preparation in goblet glass", steps:["Fill goblet glass 2/3 with ice","Add coffee – up to and over the ice cubes","Pour a splash of cold milk over it","Add a straw 🙂"] },
+    rec3: { title:"Iced Tea (large drink dispenser)", head:"Preparation", steps:["Fill dispenser approx. ¾ with tea","Top up with apple juice","Add lemon slices","Add ice cubes"] },
+    phases: [
+      { id:"vor-bw", icon:"🚪", title:"Before Start – Wagon (inside)", subs:[
+        { id:"s-lueft", icon:"🪟", title:"Ventilation & Basic Setup", tasks:[{id:"b1",text:"Open all windows to air out"},{id:"b2",text:"Turn on coffee machine & fill tank with Evian Mineral (still)"},{id:"b17",text:"Prepare clean cloths (cupboard under cash register)"},{id:"b16",text:"Fill both water tanks with fresh water at the fountain"}]},
+        { id:"s-getr", icon:"🥛", title:"Drinks & Fridge", tasks:[{id:"b3",text:"Check drinks and coffee bean stock (incl. milk & oat milk)"},{id:"b4",text:"Restock fridges with drinks (from Bistro)"},{id:"b7",text:"Fill up coffee beans to half full"},{id:"b8",text:"Check & refill ice cream and ice cubes (from Bistro)"},{id:"b9",text:"Check & refill chips (from Bistro)"}]},
+        { id:"s-iced", icon:"🧋", title:"Iced Tea & Iced Coffee", tasks:[{id:"b5",text:"Get iced tea: fill dispenser ¾ tea + apple juice, add lemon slices & ice cubes"},{id:"b6",text:"Prepare 3 iced coffee bottles (French press, grind, chill/freeze)"}]},
+        { id:"s-food", icon:"🍰", title:"Food & Decoration", tasks:[{id:"b10",text:"Get cake / nut croissant / croissant / focaccia from Bistro & place under glass dome"},{id:"b11",text:"Place small Kägi next to coffee machine (1 Kägi with every coffee)"},{id:"b14",text:"Cut lemon & orange slices, halve strawberries (rest for decoration)"},{id:"b15",text:"Wash & prepare mint"}]},
+        { id:"s-kasse", icon:"💰", title:"Cash Register & Payment", tasks:[{id:"b12",imp:true,text:"Pick up cash register from Marina Maio, count float, fill in Post-it (amount, date, time, signature) & lock register"},{id:"b13",text:"Set up TWINT codes, sugar portions & napkins on windowsill, place red tip box"}]},
+        { id:"s-atmo", icon:"🎵", title:"Atmosphere", tasks:[{id:"b18",text:"Update daily specials / board (if needed)"},{id:"b19",text:"Turn on JBL Partybox & start Spotify"}]}
+      ]},
+      { id:"vor-d", icon:"☀️", title:"Before Start – Outside", subs:[
+        { id:"s-moeb", icon:"🪑", title:"Furniture & Setup", tasks:[{id:"d1",text:"Set up tables & chairs (1 table on stage right, rest on gravel area)"},{id:"d2",text:"Put up sun umbrellas (if needed)"},{id:"d6",text:"Prepare ashtrays (optional, in cupboard under cash register)"}]},
+        { id:"s-abr", icon:"🗑️", title:"Clearing Station & Cleaning", tasks:[{id:"d3",text:"Set up clearing station"},{id:"d4",text:"Prepare small bucket with water & cloth"},{id:"d5",text:"Prepare container for glasses & bucket for rubbish, line all buckets with bin bags"}]},
+        { id:"s-wc", icon:"🚻", title:"WC & Community House", tasks:[{id:"d7",text:"Unlock community house & check WC (code on Post-it under cash register)"},{id:"d8",text:"Check toilet paper, soap & paper towels"}]}
+      ]},
+      { id:"abend", icon:"🕖", title:"Late Shift (from 19:30)", subs:[
+        { id:"s-licht", icon:"🕯️", title:"Lighting & Atmosphere", tasks:[{id:"a1",text:"Distribute small candles on tables & light them"},{id:"a2",text:"Turn on strobe, lights & BAR light in wagon"},{id:"a3",text:"Outside: turn on fairy lights & COFFEE sign"}]},
+        { id:"s-feuer", icon:"🔥", title:"Fire Bowl", tasks:[{id:"a4",text:"Light fire bowl – optional (wood in the wood shed)"}]}
+      ]},
+      { id:"zwischen", icon:"🔄", title:"Shift Handover / During Shift", subs:[
+        { id:"s-zn", icon:"🥤", title:"Restocking", tasks:[{id:"z1",text:"Refill drinks & coffee beans"},{id:"z2",text:"Refill ice cubes & ice cream"},{id:"z7",text:"Check cake stock, organise more if needed"}]},
+        { id:"s-zs", icon:"🧹", title:"Cleanliness", tasks:[{id:"z3",text:"Check toilets, clean if needed"},{id:"z4",text:"Tidy clearing station"},{id:"z5",text:"Replace cloths if needed"},{id:"z6",text:"Bring dirty dishes to Bistro & collect clean ones"}]},
+        { id:"s-zu", icon:"💬", title:"Handover", tasks:[{id:"z8",text:"Pass on any special incidents to the next shift"}]}
+      ]},
+      { id:"ende-bw", icon:"🔒", title:"End of Shift – Wagon (inside)", subs:[
+        { id:"s-em", icon:"☕", title:"Coffee Machine", tasks:[{id:"eb1",text:"Turn off & clean coffee machine"},{id:"eb2",text:"Empty coffee bean container (into glass bottle)"}]},
+        { id:"s-er", icon:"🧽", title:"Cleaning & Tidying", tasks:[{id:"eb4",text:"Thoroughly clean all surfaces (incl. walls, cupboard doors, under appliances)"},{id:"eb8",text:"Check & tidy bookshelf, put away clean dishes"},{id:"eb9",text:"Sweep & mop floor (remove rug & clean underneath)"}]},
+        { id:"s-ee", icon:"🗑️", title:"Disposal & Returns", tasks:[{id:"eb3",text:"Restock drinks for next shift"},{id:"eb5",text:"Empty bins & take to Bistro; put laundry in laundry bag"},{id:"eb6",text:"Empty lemon / orange / mint containers (take home or dispose)"},{id:"eb7",text:"Return cake & dirty dishes to Bistro"}]},
+        { id:"s-ea", icon:"🔑", title:"Closing & Security", tasks:[{id:"eb10",imp:true,text:"Close windows – make sure all windows click shut properly!"},{id:"eb11",imp:true,text:"Cash up: count balance, amount / date / time / signature on Post-it → take register to Bistro (Marina Maio's office)"},{id:"eb12",text:"Turn off music & lights"},{id:"eb13",imp:true,text:"Lock wagon & put key in key box"}]}
+      ]},
+      { id:"ende-d", icon:"🌙", title:"End of Shift – Outside", subs:[
+        { id:"s-edm", icon:"🪑", title:"Store Furniture", tasks:[{id:"ed1",text:"Wipe all tables"},{id:"ed2",text:"Fold tables & chairs & store behind wagon near grill"},{id:"ed3",text:"Store sun umbrellas & stands under wagon"}]},
+        { id:"s-edr", icon:"🧹", title:"Cleaning & Disposal", tasks:[{id:"ed4",text:"Check grounds for litter, check sandbox"},{id:"ed5",text:"Sweep stage"},{id:"ed6",text:"Empty bins & take to Bistro"},{id:"ed7",text:"Clear clearing station"}]},
+        { id:"s-edf", icon:"🔥", title:"Fire & Safety", tasks:[{id:"ed8",imp:true,text:"Extinguish fire with water; put ash separately in bin bag (fire hazard!) – leave outside"}]},
+        { id:"s-edw", icon:"🚻", title:"WC & Wastewater", tasks:[{id:"ed9",text:"Completely empty wastewater tank (into toilet), rinse briefly & reinstall"},{id:"ed10",text:"Clean toilets, refill toilet paper & hand towels, empty waste bins"},{id:"ed11",imp:true,text:"Lock community house & put key in code box"}]}
+      ]},
+      { id:"woech", icon:"📅", title:"Weekly Cleaning", subs:[
+        { id:"s-wall", icon:"🧽", title:"Cleaning Tasks", tasks:[{id:"w1",text:"Clean fridge"},{id:"w2",text:"Clean windows"},{id:"w3",text:"Descale coffee machine (if needed)"},{id:"w4",text:"Wipe shelves"},{id:"w5",text:"Tidy drinks storage"},{id:"w6",text:"Check glass stock"},{id:"w7",text:"Clean bins"},{id:"w8",text:"Clean floor under furniture"}]}
+      ]},
+      { id:"monat", icon:"📊", title:"Monthly Check (Board)", subs:[
+        { id:"s-minv", icon:"📦", title:"Inventory & Orders", tasks:[{id:"m1",text:"Carry out drinks inventory & create reorder list"},{id:"m2",text:"Count consumables (napkins, cups to go, straws, candles etc.)"},{id:"m3",text:"Check expiry dates"},{id:"m4",text:"Restock cleaning supplies"}]}
+      ]},
+    ]
+  },
+
+  mn: {
+    topSub: "Хяналтын хуудас · Бистро: 044 729 81 04",
+    rsTitle: "Өнөөдөр та ямар үүрэг гүйцэтгэж байна вэ?",
+    rsSub: "Та хэд хэдийг сонгож болно. Хяналтын хуудас тохирно.",
+    roles: {
+      opener: { title: "Өглөөний ээлж", desc: "Ажил эхлэхийн өмнөх бэлтгэл, ээлжийн солилцоо" },
+      evening: { title: "Оройн ээлж (19:30-аас)", desc: "Гэрэл, лаа, гал, ээлжийн солилцоо, ажил дуусгавар" },
+      cleaning: { title: "Долоо хоног бүрийн цэвэрлэгээ", desc: "Хөргөгч, цонх, тавиур, тавилгын доор" },
+      board: { title: "Удирдах зөвлөл", desc: "Сарын тооллого, захиалга, хугацаа шалгах" },
+    },
+    roleLabels: { opener:"🌤️ Өглөөний ээлж", evening:"🌙 Оройн ээлж", cleaning:"🧹 Долоо хоног бүрийн цэвэрлэгээ", board:"📊 Удирдах зөвлөл" },
+    start: "Хяналтын хуудас эхлүүлэх →",
+    changeRoles: "Үүрэг өөрчлөх",
+    progText: "Нийт явц",
+    resetBtn: "↺ Дахин тохируулах",
+    printBtn: "🖨 Хэвлэх",
+    warnTitle: "Чухал мэдэгдэл & ерөнхий мэдээлэл",
+    warnAlways: { title: "Үргэлж санаарай", items: ["Кассыг хэзээ ч ганцаарлуулж болохгүй – шургуулганд түгжигдсэн байх ёстой","Түлхүүрийг үргэлж түгжний нүхэнд үлдээх","Вагоныг хэзээ ч дангаар нь орхиж болохгүй","Нийтийн байрыг ажлын эцэст заавал түгжих"] },
+    warnCash: { title: "Касс & Зөөлөн мөнгө", items: ["Зөөлөн мөнгийг (TWINT орно) улаан кассанд хийх","Улаан кассыг ажлын эцэст ногоон шүүгээнд түгжих – дараа тооцоо хийнэ"] },
+    warnFridge: { title: "Хөргөгч", items: ["Цагаан хөргөгчийг үргэлж дарж хааж байх (муу хаагддаг!)"] },
+    warnSand: { title: "Элсэн хайрцаг", items: ["Үерлэхийг зөвшөөрөхгүй байх","Эцэг эхчүүдэд бүх зүйлийг эмх цэгцтэй үлдээхийг хүсэх"] },
+    warnReorder: { title: "Нөхөн захиалга", items: ["Ямар нэг зүйл дуусвал → дахин захиалж болохын тулд тэмдэглэл бичих"] },
+    recipesTitle: "Жорууд",
+    rec1: { title:"Мөсөн кофе – Бэлтгэл (3 шил)", head:"Шилнүүдийг бэлтгэх", steps:["Кофе нунтаглах","Кофены нунтаг, Франц дарагч, цайны аяга ашиглан кофе хийх","3 шилэнд малгайтай хийх","Цагаан хөргөгчийн дээд хэсгийн хасах тасалгаанд тавьж хөргөх"], note:"Бистрод бэлтгүүлэх боломжтой." },
+    rec2: { title:"Мөсөн кофе – Хүргэлт (нэг аяга)", head:"Пиала аяганд хийх арга", steps:["Пиала аягыг 2/3 мөсөөр дүүргэх","Кофе нэмэх – мөсний дээгүүр","Хүйтэн сүүгээр нэмэх","Сормуус хийх 🙂"] },
+    rec3: { title:"Мөсөн цай (том уух савтай)", head:"Бэлтгэх арга", steps:["Савыг ¾ хүртэл цайгаар дүүргэх","Алимны шүүсээр нэмэх","Нимбэгний зүсмэл нэмэх","Мөсний шоо нэмэх"] },
+    phases: [
+      { id:"vor-bw", icon:"🚪", title:"Ажил эхлэхийн өмнө – Вагон (дотор)", subs:[
+        { id:"s-lueft", icon:"🪟", title:"Агаарлалт & Үндсэн бэлтгэл", tasks:[{id:"b1",text:"Агаарлахын тулд бүх цонхыг нээх"},{id:"b2",text:"Кофены машиныг асааж, сав усаар дүүргэх (Evian Mineral, хийгүй)"},{id:"b17",text:"Цэвэр алчуур бэлтгэх (кассын доорх шүүгээнд)"},{id:"b16",text:"Хоёр усны саванд цэвэр ус дүүргэх (булгаас)"}]},
+        { id:"s-getr", icon:"🥛", title:"Ундаа & Хөргөгч", tasks:[{id:"b3",text:"Ундаа болон кофены үрийн нөөц шалгах (сүү & овъёосны сүү орно)"},{id:"b4",text:"Хөргөгчийг ундаагаар дүүргэх (Бистрогоос авах)"},{id:"b7",text:"Кофены үрийг хагас дүүргэх"},{id:"b8",text:"Мөсөн зайрмаг ба мөсний шоо шалгаж дүүргэх (Бистрогоос)"},{id:"b9",text:"Чипс шалгаж дүүргэх (Бистрогоос)"}]},
+        { id:"s-iced", icon:"🧋", title:"Мөсөн цай & Мөсөн кофе", tasks:[{id:"b5",text:"Мөсөн цай авах: сав ¾ цай + алимны шүүс, нимбэгний зүсмэл & мөс нэмэх"},{id:"b6",text:"3 мөсөн кофений шил бэлтгэх (Франц дарагч, нунтаглах, хөргөх/хөлдөөх)"}]},
+        { id:"s-food", icon:"🍰", title:"Хоол & Чимэглэл", tasks:[{id:"b10",text:"Бисквит / самрын тоор / круассан / фокачча Бистрогоос авч шилэн болон дор байрлуулах"},{id:"b11",text:"Кофены машины хажууд жижиг Kägi тавих (кофе бүрт 1 Kägi)"},{id:"b14",text:"Нимбэг & жүржний зүсмэл хийх, гүзээлзгэнэ хагасалах (үлдсэнийг чимэглэлд)"},{id:"b15",text:"Гаа угааж бэлтгэх"}]},
+        { id:"s-kasse", icon:"💰", title:"Касс & Төлбөр", tasks:[{id:"b12",imp:true,text:"Кассыг Marina Maio-с авах, мөнгөн санг тоолох, Post-it бичиж (дүн, огноо, цаг, гарын үсэг) кассанд хийж түгжих"},{id:"b13",text:"TWINT кодуудыг тавих, элсний уут & явцлага цонхны тавцан дээр тавих, улаан зөөлөн мөнгөний хайрцаг тавих"}]},
+        { id:"s-atmo", icon:"🎵", title:"Уур амьсгал", tasks:[{id:"b18",text:"Өдрийн санал / самбарыг шинэчлэх (шаардлагатай бол)"},{id:"b19",text:"JBL Partybox асааж Spotify эхлүүлэх"}]}
+      ]},
+      { id:"vor-d", icon:"☀️", title:"Ажил эхлэхийн өмнө – Гадна", subs:[
+        { id:"s-moeb", icon:"🪑", title:"Тавилга & Тохижилт", tasks:[{id:"d1",text:"Ширээ & сандал тавих (1 ширээ тайзны баруун талд, бусад нь хайрган талбайд)"},{id:"d2",text:"Нарны шүхэр татах (шаардлагатай бол)"},{id:"d6",text:"Үнсний тавган бэлтгэх (заавал биш, кассын доорх шүүгээнд)"}]},
+        { id:"s-abr", icon:"🗑️", title:"Цуглуулах станц & Цэвэрлэгээ", tasks:[{id:"d3",text:"Цуглуулах станц тохируулах"},{id:"d4",text:"Жижиг хувин ус & алчуур бэлтгэх"},{id:"d5",text:"Аяганы сав & хог хаягдлын хувин бэлтгэх, бүх хувинд уут тавих"}]},
+        { id:"s-wc", icon:"🚻", title:"Ариун цэврийн өрөө & Нийтийн байр", tasks:[{id:"d7",text:"Нийтийн байр онгойлгох & ариун цэврийн өрөө шалгах (код кассын доорх Post-it дээр)"},{id:"d8",text:"Цаас, саван & гарын алчуур шалгах"}]}
+      ]},
+      { id:"abend", icon:"🕖", title:"Оройн ээлж (19:30-аас)", subs:[
+        { id:"s-licht", icon:"🕯️", title:"Гэрэлтүүлэг & Уур амьсгал", tasks:[{id:"a1",text:"Жижиг лаануудыг ширээнд тавьж асаах"},{id:"a2",text:"Вагонд строб, гэрэл & BAR гэрэл асаах"},{id:"a3",text:"Гадна: гэрлийн хэлхээ & COFFEE тэмдэг асаах"}]},
+        { id:"s-feuer", icon:"🔥", title:"Галын аяга", tasks:[{id:"a4",text:"Галын аягыг асаах – заавал биш (мод модон байшинд)"}]}
+      ]},
+      { id:"zwischen", icon:"🔄", title:"Ээлж солилцоо / Завсраар", subs:[
+        { id:"s-zn", icon:"🥤", title:"Нөхөх", tasks:[{id:"z1",text:"Ундаа & кофены үр нөхөх"},{id:"z2",text:"Мөсний шоо & мөсөн зайрмаг нөхөх"},{id:"z7",text:"Бисквитын нөөц шалгах, шаардлагатай бол нэмэх"}]},
+        { id:"s-zs", icon:"🧹", title:"Цэвэр байдал", tasks:[{id:"z3",text:"Ариун цэврийн өрөө шалгах, шаардлагатай бол цэвэрлэх"},{id:"z4",text:"Цуглуулах станц эмх цэгцлэх"},{id:"z5",text:"Шаардлагатай бол алчуур солих"},{id:"z6",text:"Бохир аяга сав Бистрод хийж цэвэрийг авах"}]},
+        { id:"s-zu", icon:"💬", title:"Ээлж дамжуулалт", tasks:[{id:"z8",text:"Онцгой тохиолдлыг дараагийн ээлжид дамжуулах"}]}
+      ]},
+      { id:"ende-bw", icon:"🔒", title:"Ажлын төгсгөл – Вагон (дотор)", subs:[
+        { id:"s-em", icon:"☕", title:"Кофены машин", tasks:[{id:"eb1",text:"Кофены машиныг унтрааж цэвэрлэх"},{id:"eb2",text:"Кофены үрийн саванг хоослох (шилэнд хийх)"}]},
+        { id:"s-er", icon:"🧽", title:"Цэвэрлэгээ & Эмх цэгц", tasks:[{id:"eb4",text:"Бүх гадаргууг нарийвчлан цэвэрлэх (хана, шүүгээний хаалга, тоног төхөөрөмжийн доор)"},{id:"eb8",text:"Номын тавиур шалгаж эмх цэгцлэх, цэвэр аяга хийх"},{id:"eb9",text:"Шал шүүрдэж, нойтон арчих (хивс авч доорыг цэвэрлэх)"}]},
+        { id:"s-ee", icon:"🗑️", title:"Устгал & Буцаалт", tasks:[{id:"eb3",text:"Дараагийн ээлжид ундаа нөхөх"},{id:"eb5",text:"Хог хаягдлын хувин хоослож Бистрод авчрах; угаалга угаалгын уутанд хийх"},{id:"eb6",text:"Нимбэг / жүрж / гааны сав хоослох (гэртээ авах эсвэл хаях)"},{id:"eb7",text:"Бисквит & бохир аяга сав Бистрод буцаах"}]},
+        { id:"s-ea", icon:"🔑", title:"Хаалт & Аюулгүй байдал", tasks:[{id:"eb10",imp:true,text:"Цонх хаах – бүх цонхыг сайтар зогсоохыг шалгах!"},{id:"eb11",imp:true,text:"Кассын тооцоо хийх: дүн / огноо / цаг / гарын үсэг Post-it дээр → кассыг Бистрод хүлээлгэн өгөх (Marina Maio-гийн өрөөнд)"},{id:"eb12",text:"Хөгжим & гэрэл унтрааx"},{id:"eb13",imp:true,text:"Вагоныг түгжиж, түлхүүрийг түлхүүрийн хайрцагт хийх"}]}
+      ]},
+      { id:"ende-d", icon:"🌙", title:"Ажлын төгсгөл – Гадна", subs:[
+        { id:"s-edm", icon:"🪑", title:"Тавилга хадгалах", tasks:[{id:"ed1",text:"Бүх ширээг арчих"},{id:"ed2",text:"Ширээ & сандал нугалж вагоны ард шарагчийн хажууд хадгалах"},{id:"ed3",text:"Нарны шүхэр & зогсоол вагоны доор хадгалах"}]},
+        { id:"s-edr", icon:"🧹", title:"Цэвэрлэгээ & Устгал", tasks:[{id:"ed4",text:"Нутаг дэвсгэрийг хог хаягдлаас шалгах, элсэн хайрцаг шалгах"},{id:"ed5",text:"Тайзыг шүүрдэх"},{id:"ed6",text:"Хог хаягдлын хувин хоослож Бистрод авчрах"},{id:"ed7",text:"Цуглуулах станцыг цэвэрлэх"}]},
+        { id:"s-edf", icon:"🔥", title:"Гал & Аюулгүй байдал", tasks:[{id:"ed8",imp:true,text:"Галыг усаар унтрааx; үнсийг тусдаа хогийн уутанд хийх (гал түймрийн аюул!) – гадна үлдээх"}]},
+        { id:"s-edw", icon:"🚻", title:"Ариун цэврийн өрөө & Бохир ус", tasks:[{id:"ed9",text:"Бохир усны савыг бүрэн хоослох (жорлонд), товч зайлуулж дахин суурилуулах"},{id:"ed10",text:"Ариун цэврийн өрөө цэвэрлэх, цаас & гарын алчуур нөхөх, хог хаягдлын хувин хоослох"},{id:"ed11",imp:true,text:"Нийтийн байрыг түгжиж, түлхүүрийг кодын хайрцагт хийх"}]}
+      ]},
+      { id:"woech", icon:"📅", title:"Долоо хоног бүрийн цэвэрлэгээ", subs:[
+        { id:"s-wall", icon:"🧽", title:"Цэвэрлэгээний ажлууд", tasks:[{id:"w1",text:"Хөргөгч цэвэрлэх"},{id:"w2",text:"Цонх цэвэрлэх"},{id:"w3",text:"Кофены машин зэвийг арилгах (шаардлагатай бол)"},{id:"w4",text:"Тавиур арчих"},{id:"w5",text:"Ундааны агуулахыг эмх цэгцлэх"},{id:"w6",text:"Аяган нөөцийг шалгах"},{id:"w7",text:"Хогийн савнуудыг цэвэрлэх"},{id:"w8",text:"Тавилгын доорх шалыг цэвэрлэх"}]}
+      ]},
+      { id:"monat", icon:"📊", title:"Сарын хяналт (Удирдах зөвлөл)", subs:[
+        { id:"s-minv", icon:"📦", title:"Тооллого & Захиалга", tasks:[{id:"m1",text:"Ундааны тооллого хийж дахин захиалгын жагсаалт гаргах"},{id:"m2",text:"Хэрэглээний материал тоолох (явцлага, цангис, соруул, лаа гэх мэт)"},{id:"m3",text:"Дуусах хугацааг шалгах"},{id:"m4",text:"Цэвэрлэгээний материал нөхөх"}]}
+      ]},
+    ]
+  }
+};
+
+// ─── ROLE / PHASE CONFIG ─────────────────────────────────────────────────────
 const rolePhases = {
   opener:   ["vor-bw", "vor-d", "zwischen"],
   evening:  ["abend", "zwischen", "ende-bw", "ende-d"],
@@ -397,176 +574,87 @@ const rolePhases = {
   board:    ["monat"],
 };
 
-const roleLabels = {
-  opener:   "🌤️ Nachmittagsschicht",
-  evening:  "🌙 Abenddienst",
-  cleaning: "🧹 Wöchentliche Reinigung",
-  board:    "📊 Vorstand",
-};
-
-const phases = [
-  { id:"vor-bw", icon:"🚪", title:"Vor Arbeitsbeginn – Bauwagen", subs:[
-    { id:"s-lueft", icon:"🪟", title:"Lüften & Grundsetup", tasks:[
-      {id:"b1",  text:"Alle Fenster öffnen zum Lüften"},
-      {id:"b2",  text:"Kaffeemaschine einschalten & Tank mit Evian Mineral (ohne Gas) befüllen"},
-      {id:"b17", text:"Saubere Lappen bereitlegen (Schrank unter Kasse)"},
-      {id:"b16", text:"Beide Wassertanks am Brunnen mit Frischwasser auffüllen"},
-    ]},
-    { id:"s-getr", icon:"🥛", title:"Getränke & Kühlschrank", tasks:[
-      {id:"b3", text:"Getränke- und Kaffeebohnenbestand kontrollieren (inkl. Milch & Hafermilch)"},
-      {id:"b4", text:"Kühlschränke mit Getränken auffüllen (aus dem Bistro)"},
-      {id:"b7", text:"Kaffeebohnen auf halbvoll auffüllen"},
-      {id:"b8", text:"Glacé und Eiswürfel kontrollieren & auffüllen (aus dem Bistro)"},
-      {id:"b9", text:"Chips prüfen & auffüllen (aus dem Bistro)"},
-    ]},
-    { id:"s-iced", icon:"🧋", title:"Eistee & Iced Coffee", tasks:[
-      {id:"b5", text:"Eistee holen: Getränkespender ¾ Tee + Apfelsaft, Zitronenschnitze & Eiswürfel"},
-      {id:"b6", text:"3 Iced-Coffee-Flaschen vorbereiten (French Press, mahlen, kühlen/einfrieren)"},
-    ]},
-    { id:"s-food", icon:"🍰", title:"Essen & Deko", tasks:[
-      {id:"b10", text:"Kuchen / Nussgipfel / Gipfeli / Focaccia aus Bistro holen & unter Glasglocke platzieren"},
-      {id:"b11", text:"Kleines Kägi neben Kaffeemaschine bereitstellen (zu jedem Kaffee 1 Kägi)"},
-      {id:"b14", text:"Zitronen- & Orangenscheiben schneiden, Erdbeeren halbieren (Rest als Dekoration)"},
-      {id:"b15", text:"Minze waschen & vorbereiten"},
-    ]},
-    { id:"s-kasse", icon:"💰", title:"Kasse & Zahlung", tasks:[
-      {id:"b12", imp:true, text:"Kasse bei Marina Maio abholen, Kassenstock zählen, Post-it (Betrag, Datum, Zeit, Unterschrift) in Kasse legen & einschliessen"},
-      {id:"b13", text:"TWINT-Codes aufstellen, Zuckerportionen & Servietten auf Fensterbrett, rotes Kaffikässeli hinstellen"},
-    ]},
-    { id:"s-atmo", icon:"🎵", title:"Atmosphäre", tasks:[
-      {id:"b18", text:"Tagesangebot / Tafel aktualisieren (falls nötig)"},
-      {id:"b19", text:"JBL Partybox einschalten & Spotify starten"},
-    ]},
-  ]},
-  { id:"vor-d", icon:"☀️", title:"Vor Arbeitsbeginn – Draussen", subs:[
-    { id:"s-moeb", icon:"🪑", title:"Möbel & Einrichtung", tasks:[
-      {id:"d1", text:"Tische & Stühle aufstellen (1 Tisch auf Bühne rechts, Rest auf Kiesplatz)"},
-      {id:"d2", text:"Sonnenschirme aufstellen (bei Bedarf)"},
-      {id:"d6", text:"Aschenbecher bereitstellen (optional, im Schrank unter Kasse)"},
-    ]},
-    { id:"s-abr", icon:"🗑️", title:"Abräumstation & Reinigung", tasks:[
-      {id:"d3", text:"Abräumstation einrichten"},
-      {id:"d4", text:"Kleinen Eimer mit Wasser & Lappen bereitstellen"},
-      {id:"d5", text:"Behälter für Gläser & Eimer für Müll bereitstellen, alle Eimer mit Abfallsäcken"},
-    ]},
-    { id:"s-wc", icon:"🚻", title:"WC & Gemeinschaftshaus", tasks:[
-      {id:"d7", text:"Gemeinschaftshaus aufschliessen & WC kontrollieren (Code auf Post-it unter Kasse)"},
-      {id:"d8", text:"WC-Papier, Seife & Papierhandtücher kontrollieren"},
-    ]},
-  ]},
-  { id:"abend", icon:"🕖", title:"Abenddienst (ab 19:30 Uhr)", subs:[
-    { id:"s-licht", icon:"🕯️", title:"Licht & Atmosphäre", tasks:[
-      {id:"a1", text:"Kleine Kerzen auf Tischen verteilen & anzünden"},
-      {id:"a2", text:"Strobo, Lichter & BAR-Licht im Wagen einschalten"},
-      {id:"a3", text:"Draussen: Lichterketten & COFFEE-Schild einschalten"},
-    ]},
-    { id:"s-feuer", icon:"🔥", title:"Feuerschale", tasks:[
-      {id:"a4", text:"Feuerschale anzünden – optional (Holz im Holzhüsli)"},
-    ]},
-  ]},
-  { id:"zwischen", icon:"🔄", title:"Schichtwechsel / Zwischendurch", subs:[
-    { id:"s-zn", icon:"🥤", title:"Nachfüllen", tasks:[
-      {id:"z1", text:"Getränke & Kaffeebohnen auffüllen"},
-      {id:"z2", text:"Eiswürfel & Glacé auffüllen"},
-      {id:"z7", text:"Kuchenbestand prüfen, bei Bedarf nachorganisieren"},
-    ]},
-    { id:"s-zs", icon:"🧹", title:"Sauberkeit", tasks:[
-      {id:"z3", text:"Toiletten kontrollieren, bei Bedarf reinigen"},
-      {id:"z4", text:"Abräumstation aufräumen"},
-      {id:"z5", text:"Lappen wechseln bei Bedarf"},
-      {id:"z6", text:"Schmutziges Geschirr ins Bistro bringen & sauberes holen"},
-    ]},
-    { id:"s-zu", icon:"💬", title:"Übergabe", tasks:[
-      {id:"z8", text:"Besondere Vorkommnisse an nächste Schicht weitergeben"},
-    ]},
-  ]},
-  { id:"ende-bw", icon:"🔒", title:"Arbeitsende – Bauwagen", subs:[
-    { id:"s-em", icon:"☕", title:"Kaffeemaschine", tasks:[
-      {id:"eb1", text:"Kaffeemaschine ausschalten & reinigen"},
-      {id:"eb2", text:"Kaffeebohnenbehälter leeren (in durchsichtige Glasflasche)"},
-    ]},
-    { id:"s-er", icon:"🧽", title:"Reinigung & Aufräumen", tasks:[
-      {id:"eb4", text:"Alle Oberflächen gründlich reinigen (inkl. Wände, Schranktüren, unter Geräten)"},
-      {id:"eb8", text:"Bücherregal kontrollieren & aufräumen, sauberes Geschirr einräumen"},
-      {id:"eb9", text:"Boden fegen & nass wischen (Teppich rausnehmen & darunter reinigen)"},
-    ]},
-    { id:"s-ee", icon:"🗑️", title:"Entsorgung & Rückgabe", tasks:[
-      {id:"eb3", text:"Getränke für nächste Schicht auffüllen"},
-      {id:"eb5", text:"Mülleimer leeren & ins Bistro bringen; Wäsche in Wäschesack"},
-      {id:"eb6", text:"Zitronen / Orangen / Minze-Behälter leeren (mitnehmen oder entsorgen)"},
-      {id:"eb7", text:"Kuchen & schmutziges Geschirr zurück ins Bistro"},
-    ]},
-    { id:"s-ea", icon:"🔑", title:"Abschluss & Sicherheit", tasks:[
-      {id:"eb10", imp:true, text:"Fenster schliessen – alle Fenster gut einrasten lassen!"},
-      {id:"eb11", imp:true, text:"Kasse abrechnen: Betrag / Datum / Zeit / Unterschrift auf Post-it → Kasse ins Bistro (Büro Marina Maio)"},
-      {id:"eb12", text:"Musik & Licht ausschalten"},
-      {id:"eb13", imp:true, text:"Bauwagen abschliessen & Schlüssel in Schlüsselbox"},
-    ]},
-  ]},
-  { id:"ende-d", icon:"🌙", title:"Arbeitsende – Draussen", subs:[
-    { id:"s-edm", icon:"🪑", title:"Möbel verstauen", tasks:[
-      {id:"ed1", text:"Alle Tische abwischen"},
-      {id:"ed2", text:"Tische & Stühle zusammenklappen & hinter dem Wagen beim Grill verstauen"},
-      {id:"ed3", text:"Sonnenschirme & Ständer unter dem Wagen verstauen"},
-    ]},
-    { id:"s-edr", icon:"🧹", title:"Reinigung & Entsorgung", tasks:[
-      {id:"ed4", text:"Gelände auf Abfall kontrollieren, Sandkasten checken"},
-      {id:"ed5", text:"Bühne mit Besen kehren"},
-      {id:"ed6", text:"Mülleimer leeren & zum Bistro bringen"},
-      {id:"ed7", text:"Abräumstation zusammenräumen"},
-    ]},
-    { id:"s-edf", icon:"🔥", title:"Feuer & Sicherheit", tasks:[
-      {id:"ed8", imp:true, text:"Feuer mit Wasser löschen; Asche separat in Müllsack (Brandgefahr!) – draussen stehen lassen"},
-    ]},
-    { id:"s-edw", icon:"🚻", title:"WC & Abwasser", tasks:[
-      {id:"ed9",  text:"Abwassertank komplett leeren (in Toilette), kurz ausspülen & wieder installieren"},
-      {id:"ed10", text:"Toiletten reinigen, WC-Papier & Handtücher auffüllen, Abfallkörbe leeren"},
-      {id:"ed11", imp:true, text:"Gemeinschaftshaus abschliessen & Schlüssel in Codebox"},
-    ]},
-  ]},
-  { id:"woech", icon:"📅", title:"Wöchentliche Reinigung", subs:[
-    { id:"s-wall", icon:"🧽", title:"Reinigungsaufgaben", tasks:[
-      {id:"w1", text:"Kühlschrank reinigen"},
-      {id:"w2", text:"Fenster reinigen"},
-      {id:"w3", text:"Kaffeemaschine entkalken (bei Bedarf)"},
-      {id:"w4", text:"Regale auswischen"},
-      {id:"w5", text:"Getränkelager aufräumen"},
-      {id:"w6", text:"Glasbestand kontrollieren"},
-      {id:"w7", text:"Müllcontainer reinigen"},
-      {id:"w8", text:"Boden unter Möbeln reinigen"},
-    ]},
-  ]},
-  { id:"monat", icon:"📊", title:"Monatskontrolle (Vorstand)", subs:[
-    { id:"s-minv", icon:"📦", title:"Inventur & Bestellung", tasks:[
-      {id:"m1", text:"Getränkeinventur durchführen & Nachbestellliste erstellen"},
-      {id:"m2", text:"Verbrauchsmaterial zählen (Servietten, Cups to go, Röhrli, Kerzen usw.)"},
-      {id:"m3", text:"Ablaufdaten kontrollieren"},
-      {id:"m4", text:"Reinigungsmaterial auffüllen"},
-    ]},
-  ]},
-];
-
-// State
-let state = {};
-let activeRoles = new Set();
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {}, activeRoles = new Set(), currentLang = "de";
 try {
-  const saved = JSON.parse(localStorage.getItem(KEY)) || {};
-  state = saved.checks || {};
-  const savedRoles = saved.roles || [];
-  savedRoles.forEach(r => activeRoles.add(r));
+  const s = JSON.parse(localStorage.getItem(KEY)) || {};
+  state = s.checks || {};
+  (s.roles || []).forEach(r => activeRoles.add(r));
+  if (s.lang) currentLang = s.lang;
 } catch(e) {}
 
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify({ checks: state, roles: [...activeRoles] })); } catch(e) {}
+  try { localStorage.setItem(KEY, JSON.stringify({ checks: state, roles: [...activeRoles], lang: currentLang })); } catch(e) {}
 }
 
-// Role selection
+// ─── LANGUAGE ────────────────────────────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  save();
+  document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+  applyTranslations();
+  if (phasesBuilt) rebuildPhases();
+}
+
+function langLabel(lang) {
+  return { de:"Deutsch", en:"English", mn:"Монгол" }[lang];
+}
+
+function t() { return i18n[currentLang]; }
+
+function applyTranslations() {
+  const T = t();
+  document.getElementById("top-sub").textContent = T.topSub;
+  document.getElementById("rs-title").textContent = T.rsTitle;
+  document.getElementById("rs-sub").textContent = T.rsSub;
+  ["opener","evening","cleaning","board"].forEach(r => {
+    document.getElementById("role-"+r+"-title").textContent = T.roles[r].title;
+    document.getElementById("role-"+r+"-desc").textContent = T.roles[r].desc;
+  });
+  document.getElementById("start-btn").textContent = T.start;
+  document.getElementById("change-roles-btn").textContent = T.changeRoles;
+  document.getElementById("prog-text").textContent = T.progText;
+  document.getElementById("reset-btn").textContent = T.resetBtn;
+  document.getElementById("print-btn").textContent = T.printBtn;
+  document.getElementById("warn-title").textContent = T.warnTitle;
+  document.getElementById("warn-always-title").textContent = T.warnAlways.title;
+  document.getElementById("warn-cash-title").textContent = T.warnCash.title;
+  document.getElementById("warn-fridge-title").textContent = T.warnFridge.title;
+  document.getElementById("warn-sand-title").textContent = T.warnSand.title;
+  document.getElementById("warn-reorder-title").textContent = T.warnReorder.title;
+  setList("warn-always-list", T.warnAlways.items);
+  setList("warn-cash-list", T.warnCash.items);
+  setList("warn-fridge-list", T.warnFridge.items);
+  setList("warn-sand-list", T.warnSand.items);
+  setList("warn-reorder-list", T.warnReorder.items);
+  document.getElementById("recipes-title").textContent = T.recipesTitle;
+  document.getElementById("rec1-title").textContent = T.rec1.title;
+  document.getElementById("rec1-head").textContent = T.rec1.head;
+  setList("rec1-steps", T.rec1.steps, "ol");
+  document.getElementById("rec1-note").textContent = T.rec1.note;
+  document.getElementById("rec2-title").textContent = T.rec2.title;
+  document.getElementById("rec2-head").textContent = T.rec2.head;
+  setList("rec2-steps", T.rec2.steps, "ol");
+  document.getElementById("rec3-title").textContent = T.rec3.title;
+  document.getElementById("rec3-head").textContent = T.rec3.head;
+  setList("rec3-steps", T.rec3.steps, "ol");
+
+  if (activeRoles.size > 0) {
+    document.getElementById("role-bar-text").textContent = [...activeRoles].map(r => T.roleLabels[r]).join(" · ");
+  }
+}
+
+function setList(id, items, tag = "ul") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = items.map(i => `<li>${i}</li>`).join("");
+}
+
+// ─── ROLE SELECTION ──────────────────────────────────────────────────────────
 function toggleRole(card) {
-  const role = card.dataset.role;
   card.classList.toggle("selected");
-  const btn = document.getElementById("start-btn");
-  const anySelected = document.querySelectorAll(".role-card.selected").length > 0;
-  btn.classList.toggle("active", anySelected);
+  document.getElementById("start-btn").classList.toggle("active",
+    document.querySelectorAll(".role-card.selected").length > 0);
 }
 
 function startChecklist() {
@@ -581,148 +669,152 @@ function changeRoles() {
   document.getElementById("role-screen").style.display = "block";
   document.getElementById("role-bar").style.display = "none";
   document.getElementById("main-content").style.display = "none";
-  // Re-reflect current roles in cards
-  document.querySelectorAll(".role-card").forEach(c => {
-    c.classList.toggle("selected", activeRoles.has(c.dataset.role));
-  });
-  const btn = document.getElementById("start-btn");
-  btn.classList.toggle("active", activeRoles.size > 0);
+  document.querySelectorAll(".role-card").forEach(c => c.classList.toggle("selected", activeRoles.has(c.dataset.role)));
+  document.getElementById("start-btn").classList.toggle("active", activeRoles.size > 0);
 }
 
 function showChecklist() {
   document.getElementById("role-screen").style.display = "none";
   document.getElementById("role-bar").style.display = "flex";
   document.getElementById("main-content").style.display = "block";
-
-  // Update role bar text
-  const labels = [...activeRoles].map(r => roleLabels[r]).join(" · ");
-  document.getElementById("role-bar-text").textContent = labels;
-
-  // Determine visible phase IDs
-  const visibleIds = new Set();
-  activeRoles.forEach(r => (rolePhases[r] || []).forEach(id => visibleIds.add(id)));
-
-  // Build or show/hide phases
-  buildPhases(visibleIds);
-  updateUI(visibleIds);
+  document.getElementById("role-bar-text").textContent = [...activeRoles].map(r => t().roleLabels[r]).join(" · ");
+  const visIds = getVisibleIds();
+  buildPhases(visIds);
+  updateUI(visIds);
 }
 
+function getVisibleIds() {
+  const s = new Set();
+  activeRoles.forEach(r => (rolePhases[r] || []).forEach(id => s.add(id)));
+  return s;
+}
+
+// ─── PHASE BUILDING ──────────────────────────────────────────────────────────
 let phasesBuilt = false;
+
 function buildPhases(visibleIds) {
   const container = document.getElementById("phases");
-  if (!phasesBuilt) {
-    phases.forEach((p, pi) => {
-      const det = document.createElement("details");
-      det.className = "phase";
-      det.id = "phase-" + p.id;
-      if (pi === 0) det.open = true;
+  container.innerHTML = "";
+  phasesBuilt = true;
+  const phases = t().phases;
+  phases.forEach((p, pi) => {
+    const det = document.createElement("details");
+    det.className = "phase";
+    det.id = "phase-" + p.id;
+    det.style.display = visibleIds.has(p.id) ? "" : "none";
+    if (pi === 0 && visibleIds.has(p.id)) det.open = true;
 
-      const subsHTML = p.subs.map(s => `
-        <details class="sub" id="sub-${s.id}">
-          <summary class="sub-summary">
-            <span class="sub-icon">${s.icon}</span>
-            <span class="sub-info">${s.title} <span class="sub-prog" id="sp-${s.id}"></span></span>
-            <span class="sub-chevron">▾</span>
-          </summary>
-          <div class="sub-body">
-            ${s.tasks.map(t => `
-              <div class="task${t.imp ? " imp" : ""}" id="row-${t.id}">
-                <label for="cb-${t.id}">
-                  <input type="checkbox" id="cb-${t.id}" data-id="${t.id}">
-                  <span class="check-box">✓</span>
-                  <span class="task-text">${t.text}</span>
-                </label>
-              </div>`).join("")}
-          </div>
-        </details>`).join("");
-
-      det.innerHTML = `
-        <summary class="phase-summary">
-          <span class="ph-icon">${p.icon}</span>
-          <span class="ph-info">
-            <span class="ph-title">${p.title}</span>
-            <span class="ph-prog-wrap">
-              <span class="ph-prog-bar"><span class="ph-prog-fill" id="pf-${p.id}" style="width:0%"></span></span>
-              <span class="ph-prog-label" id="pl-${p.id}"></span>
-            </span>
-          </span>
-          <span class="chevron">▾</span>
+    const subsHTML = p.subs.map(s => `
+      <details class="sub" id="sub-${s.id}">
+        <summary class="sub-summary">
+          <span class="sub-icon">${s.icon}</span>
+          <span class="sub-info">${s.title} <span class="sub-prog" id="sp-${s.id}"></span></span>
+          <span class="sub-chevron">▾</span>
         </summary>
-        <div class="phase-body">${subsHTML}</div>`;
-      container.appendChild(det);
-    });
+        <div class="sub-body">
+          ${s.tasks.map(task => `
+            <div class="task${task.imp ? " imp" : ""}${state[task.id] ? " done" : ""}" id="row-${task.id}">
+              <label for="cb-${task.id}">
+                <input type="checkbox" id="cb-${task.id}" data-id="${task.id}"${state[task.id] ? " checked" : ""}>
+                <span class="check-box">✓</span>
+                <span class="task-text">${task.text}</span>
+              </label>
+            </div>`).join("")}
+        </div>
+      </details>`).join("");
 
-    container.addEventListener("change", e => {
-      if (e.target.type !== "checkbox") return;
-      state[e.target.dataset.id] = e.target.checked;
-      save();
-      const visIds = new Set();
-      activeRoles.forEach(r => (rolePhases[r] || []).forEach(id => visIds.add(id)));
-      updateUI(visIds);
-    });
-
-    phasesBuilt = true;
-  }
-
-  // Show/hide phases based on roles
-  phases.forEach(p => {
-    const el = document.getElementById("phase-" + p.id);
-    if (el) el.style.display = visibleIds.has(p.id) ? "" : "none";
+    det.innerHTML = `
+      <summary class="phase-summary">
+        <span class="ph-icon">${p.icon}</span>
+        <span class="ph-info">
+          <span class="ph-title">${p.title}</span>
+          <span class="ph-prog-wrap">
+            <span class="ph-prog-bar"><span class="ph-prog-fill" id="pf-${p.id}" style="width:0%"></span></span>
+            <span class="ph-prog-label" id="pl-${p.id}"></span>
+          </span>
+        </span>
+        <span class="chevron">▾</span>
+      </summary>
+      <div class="phase-body">${subsHTML}</div>`;
+    container.appendChild(det);
   });
+
+  container.addEventListener("change", e => {
+    if (e.target.type !== "checkbox") return;
+    state[e.target.dataset.id] = e.target.checked;
+    save();
+    updateUI(getVisibleIds());
+  });
+}
+
+function rebuildPhases() {
+  if (!phasesBuilt) return;
+  const visIds = getVisibleIds();
+  buildPhases(visIds);
+  updateUI(visIds);
 }
 
 function updateUI(visibleIds) {
   let totalDone = 0, total = 0;
-
+  const phases = t().phases;
   phases.forEach(p => {
     if (!visibleIds.has(p.id)) return;
     let pDone = 0, pTotal = 0;
     p.subs.forEach(s => {
       let sDone = 0;
-      s.tasks.forEach(t => {
-        const cb = document.getElementById("cb-" + t.id);
-        const row = document.getElementById("row-" + t.id);
+      s.tasks.forEach(task => {
+        const cb = document.getElementById("cb-" + task.id);
+        const row = document.getElementById("row-" + task.id);
         if (!cb || !row) return;
-        const checked = !!state[t.id];
+        const checked = !!state[task.id];
         cb.checked = checked;
         row.classList.toggle("done", checked);
         if (checked) { sDone++; pDone++; totalDone++; }
         pTotal++;
       });
       const sp = document.getElementById("sp-" + s.id);
-      if (sp) {
-        sp.textContent = sDone + "/" + s.tasks.length;
-        sp.className = "sub-prog" + (sDone === s.tasks.length ? " done" : "");
-      }
+      if (sp) { sp.textContent = sDone+"/"+s.tasks.length; sp.className = "sub-prog"+(sDone===s.tasks.length?" done":""); }
     });
     total += pTotal;
-    const pct = pTotal ? Math.round(pDone / pTotal * 100) : 0;
-    const pf = document.getElementById("pf-" + p.id);
-    const pl = document.getElementById("pl-" + p.id);
-    if (pf) pf.style.width = pct + "%";
-    if (pl) {
-      pl.textContent = pDone + " / " + pTotal;
-      pl.className = "ph-prog-label" + (pDone === pTotal && pTotal > 0 ? " all-done" : "");
-    }
+    const pct = pTotal ? Math.round(pDone/pTotal*100) : 0;
+    const pf = document.getElementById("pf-"+p.id);
+    const pl = document.getElementById("pl-"+p.id);
+    if (pf) pf.style.width = pct+"%";
+    if (pl) { pl.textContent = pDone+" / "+pTotal; pl.className = "ph-prog-label"+(pDone===pTotal&&pTotal>0?" all-done":""); }
   });
-
-  document.getElementById("prog-num").textContent = totalDone + " / " + total;
-  document.getElementById("prog-fill").style.width = total ? Math.round(totalDone / total * 100) + "%" : "0%";
+  document.getElementById("prog-num").textContent = totalDone+" / "+total;
+  document.getElementById("prog-fill").style.width = total ? Math.round(totalDone/total*100)+"%" : "0%";
 }
 
 function resetAll() {
-  if (!confirm("Wirklich alle Häkchen entfernen?")) return;
+  if (!confirm(currentLang==="de"?"Wirklich alle Häkchen entfernen?":currentLang==="en"?"Really reset all checkboxes?":"Бүх тэмдэглэгээг устгах уу?")) return;
   state = {}; save();
-  const visIds = new Set();
-  activeRoles.forEach(r => (rolePhases[r] || []).forEach(id => visIds.add(id)));
-  updateUI(visIds);
+  rebuildPhases();
 }
 
-// On load: if roles were saved, go straight to checklist
+// ─── INIT ────────────────────────────────────────────────────────────────────
+// Language buttons
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.addEventListener("click", () => setLang(btn.dataset.lang));
+});
+
+// Role cards
+document.querySelectorAll(".role-card").forEach(card => {
+  card.addEventListener("click", () => toggleRole(card));
+});
+
+// Start, change roles, reset, print
+document.getElementById("start-btn").addEventListener("click", startChecklist);
+document.getElementById("change-roles-btn").addEventListener("click", changeRoles);
+document.getElementById("reset-btn").addEventListener("click", resetAll);
+document.getElementById("print-btn").addEventListener("click", () => window.print());
+
+// Set correct active lang button
+document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
+applyTranslations();
+
 if (activeRoles.size > 0) {
-  document.querySelectorAll(".role-card").forEach(c => {
-    c.classList.toggle("selected", activeRoles.has(c.dataset.role));
-  });
+  document.querySelectorAll(".role-card").forEach(c => c.classList.toggle("selected", activeRoles.has(c.dataset.role)));
   document.getElementById("start-btn").classList.add("active");
   showChecklist();
 }

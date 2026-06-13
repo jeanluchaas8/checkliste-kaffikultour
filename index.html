@@ -145,7 +145,53 @@
   .task.imp .task-text { font-weight: 500; }
   .task.done .task-text { color: #b0aea6; text-decoration: line-through; }
 
-  /* Recipe */
+  /* Timer tasks */
+  .task.timer-task { align-items: flex-start; flex-direction: column; padding: 8px 0; gap: 0; }
+  .task.timer-task .timer-top { display: flex; align-items: center; gap: 10px; width: 100%; }
+  .timer-check {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1.5px solid #c8c6be; background: #fff;
+    flex-shrink: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .timer-check.active { background: #1a6b52; border-color: #1a6b52; color: #fff; }
+  .timer-label { flex: 1; font-size: 13.5px; line-height: 1.5; color: #1a1a18; cursor: pointer; }
+  .timer-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 8px;
+    border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+  }
+  .timer-badge.pending { background: #f0efe8; color: #888; }
+  .timer-badge.active { background: #e1f5ee; color: #0f5c3a; }
+  .timer-badge.soon { background: #fff8e6; color: #7a5500; }
+  .timer-badge.overdue { background: #fcebeb; color: #a32d2d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .timer-settings {
+    display: none; align-items: center; gap: 8px;
+    margin-top: 6px; padding: 6px 8px; margin-left: 34px;
+    background: #f5f4f0; border-radius: 8px; width: calc(100% - 34px);
+  }
+  .timer-settings.open { display: flex; }
+  .timer-settings label { font-size: 12px; color: #666; flex-shrink: 0; }
+  .timer-settings input[type=number] {
+    width: 56px; font-size: 13px; padding: 3px 6px;
+    border: 0.5px solid #c8c6be; border-radius: 6px;
+    font-family: inherit; text-align: center; background: #fff;
+  }
+  .timer-settings span { font-size: 12px; color: #666; }
+  .timer-set-btn {
+    font-family: inherit; font-size: 12px; padding: 3px 10px;
+    border-radius: 6px; border: 0.5px solid #1a6b52;
+    background: #fff; color: #1a6b52; cursor: pointer; margin-left: auto;
+  }
+  .timer-gear {
+    font-size: 14px; color: #bbb; cursor: pointer; flex-shrink: 0;
+    background: none; border: none; padding: 2px; line-height: 1;
+  }
+  .timer-gear:hover { color: #888; }
+
+
   .recipe-card { background: #f5f4f0; border-radius: 10px; border: 0.5px solid #dddbd2; padding: 0.75rem 1rem; margin-top: 0.5rem; font-size: 13px; line-height: 1.6; color: #333; }
   .recipe-card strong { font-weight: 500; color: #1a6b52; display: block; margin-bottom: 4px; }
   .recipe-card ol { padding-left: 1.2rem; }
@@ -400,9 +446,9 @@ const i18n = {
         { id:"s-feuer", icon:"🔥", title:"Feuerschale", tasks:[{id:"a4",text:"Feuerschale anzünden – optional (Holz im Holzhüsli)"}]}
       ]},
       { id:"zwischen", icon:"🔄", title:"Schichtwechsel / Zwischendurch", subs:[
-        { id:"s-zn", icon:"🥤", title:"Nachfüllen", tasks:[{id:"z1",text:"Getränke & Kaffeebohnen auffüllen"},{id:"z2",text:"Eiswürfel & Glacé auffüllen"},{id:"z7",text:"Kuchenbestand prüfen, bei Bedarf nachorganisieren"}]},
-        { id:"s-zs", icon:"🧹", title:"Sauberkeit", tasks:[{id:"z3",text:"Toiletten kontrollieren, bei Bedarf reinigen"},{id:"z4",text:"Abräumstation aufräumen"},{id:"z5",text:"Lappen wechseln bei Bedarf"},{id:"z6",text:"Schmutziges Geschirr ins Bistro bringen & sauberes holen"}]},
-        { id:"s-zu", icon:"💬", title:"Übergabe", tasks:[{id:"z8",text:"Besondere Vorkommnisse an nächste Schicht weitergeben"}]}
+        { id:"s-zn", icon:"🥤", title:"Nachfüllen", tasks:[{id:"z1",counter:true,text:"Getränke & Kaffeebohnen auffüllen"},{id:"z2",counter:true,text:"Eiswürfel & Glacé auffüllen"},{id:"z7",counter:true,text:"Kuchenbestand prüfen, bei Bedarf nachorganisieren"}]},
+        { id:"s-zs", icon:"🧹", title:"Sauberkeit", tasks:[{id:"z3",counter:true,text:"Toiletten kontrollieren, bei Bedarf reinigen"},{id:"z4",counter:true,text:"Abräumstation aufräumen"},{id:"z5",counter:true,text:"Lappen wechseln bei Bedarf"},{id:"z6",counter:true,text:"Schmutziges Geschirr ins Bistro bringen & sauberes holen"}]},
+        { id:"s-zu", icon:"💬", title:"Übergabe", tasks:[{id:"z8",counter:true,text:"Besondere Vorkommnisse an nächste Schicht weitergeben"}]}
       ]},
       { id:"ende-bw", icon:"🔒", title:"Arbeitsende – Bauwagen", subs:[
         { id:"s-em", icon:"☕", title:"Kaffeemaschine", tasks:[{id:"eb1",text:"Kaffeemaschine ausschalten & reinigen"},{id:"eb2",text:"Kaffeebohnenbehälter leeren (in durchsichtige Glasflasche)"}]},
@@ -470,9 +516,9 @@ const i18n = {
         { id:"s-feuer", icon:"🔥", title:"Fire Bowl", tasks:[{id:"a4",text:"Light fire bowl – optional (wood in the wood shed)"}]}
       ]},
       { id:"zwischen", icon:"🔄", title:"Shift Handover / During Shift", subs:[
-        { id:"s-zn", icon:"🥤", title:"Restocking", tasks:[{id:"z1",text:"Refill drinks & coffee beans"},{id:"z2",text:"Refill ice cubes & ice cream"},{id:"z7",text:"Check cake stock, organise more if needed"}]},
-        { id:"s-zs", icon:"🧹", title:"Cleanliness", tasks:[{id:"z3",text:"Check toilets, clean if needed"},{id:"z4",text:"Tidy clearing station"},{id:"z5",text:"Replace cloths if needed"},{id:"z6",text:"Bring dirty dishes to Bistro & collect clean ones"}]},
-        { id:"s-zu", icon:"💬", title:"Handover", tasks:[{id:"z8",text:"Pass on any special incidents to the next shift"}]}
+        { id:"s-zn", icon:"🥤", title:"Restocking", tasks:[{id:"z1",counter:true,text:"Refill drinks & coffee beans"},{id:"z2",counter:true,text:"Refill ice cubes & ice cream"},{id:"z7",counter:true,text:"Check cake stock, organise more if needed"}]},
+        { id:"s-zs", icon:"🧹", title:"Cleanliness", tasks:[{id:"z3",counter:true,text:"Check toilets, clean if needed"},{id:"z4",counter:true,text:"Tidy clearing station"},{id:"z5",counter:true,text:"Replace cloths if needed"},{id:"z6",counter:true,text:"Bring dirty dishes to Bistro & collect clean ones"}]},
+        { id:"s-zu", icon:"💬", title:"Handover", tasks:[{id:"z8",counter:true,text:"Pass on any special incidents to the next shift"}]}
       ]},
       { id:"ende-bw", icon:"🔒", title:"End of Shift – Wagon (inside)", subs:[
         { id:"s-em", icon:"☕", title:"Coffee Machine", tasks:[{id:"eb1",text:"Turn off & clean coffee machine"},{id:"eb2",text:"Empty coffee bean container (into glass bottle)"}]},
@@ -540,9 +586,9 @@ const i18n = {
         { id:"s-feuer", icon:"🔥", title:"Галын аяга", tasks:[{id:"a4",text:"Галын аягыг асаах – заавал биш (мод модон байшинд)"}]}
       ]},
       { id:"zwischen", icon:"🔄", title:"Ээлж солилцоо / Завсраар", subs:[
-        { id:"s-zn", icon:"🥤", title:"Нөхөх", tasks:[{id:"z1",text:"Ундаа & кофены үр нөхөх"},{id:"z2",text:"Мөсний шоо & мөсөн зайрмаг нөхөх"},{id:"z7",text:"Бисквитын нөөц шалгах, шаардлагатай бол нэмэх"}]},
-        { id:"s-zs", icon:"🧹", title:"Цэвэр байдал", tasks:[{id:"z3",text:"Ариун цэврийн өрөө шалгах, шаардлагатай бол цэвэрлэх"},{id:"z4",text:"Цуглуулах станц эмх цэгцлэх"},{id:"z5",text:"Шаардлагатай бол алчуур солих"},{id:"z6",text:"Бохир аяга сав Бистрод хийж цэвэрийг авах"}]},
-        { id:"s-zu", icon:"💬", title:"Ээлж дамжуулалт", tasks:[{id:"z8",text:"Онцгой тохиолдлыг дараагийн ээлжид дамжуулах"}]}
+        { id:"s-zn", icon:"🥤", title:"Нөхөх", tasks:[{id:"z1",counter:true,text:"Ундаа & кофены үр нөхөх"},{id:"z2",counter:true,text:"Мөсний шоо & мөсөн зайрмаг нөхөх"},{id:"z7",counter:true,text:"Бисквитын нөөц шалгах, шаардлагатай бол нэмэх"}]},
+        { id:"s-zs", icon:"🧹", title:"Цэвэр байдал", tasks:[{id:"z3",counter:true,text:"Ариун цэврийн өрөө шалгах, шаардлагатай бол цэвэрлэх"},{id:"z4",counter:true,text:"Цуглуулах станц эмх цэгцлэх"},{id:"z5",counter:true,text:"Шаардлагатай бол алчуур солих"},{id:"z6",counter:true,text:"Бохир аяга сав Бистрод хийж цэвэрийг авах"}]},
+        { id:"s-zu", icon:"💬", title:"Ээлж дамжуулалт", tasks:[{id:"z8",counter:true,text:"Онцгой тохиолдлыг дараагийн ээлжид дамжуулах"}]}
       ]},
       { id:"ende-bw", icon:"🔒", title:"Ажлын төгсгөл – Вагон (дотор)", subs:[
         { id:"s-em", icon:"☕", title:"Кофены машин", tasks:[{id:"eb1",text:"Кофены машиныг унтрааж цэвэрлэх"},{id:"eb2",text:"Кофены үрийн саванг хоослох (шилэнд хийх)"}]},
@@ -575,16 +621,18 @@ const rolePhases = {
 };
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
-let state = {}, activeRoles = new Set(), currentLang = "de";
+let state = {}, timerDurations = {}, timerEndTimes = {}, activeTimers = {}, activeRoles = new Set(), currentLang = "de";
 try {
   const s = JSON.parse(localStorage.getItem(KEY)) || {};
   state = s.checks || {};
+  timerDurations = s.timerDurations || {};
+  timerEndTimes = s.timerEndTimes || {};
   (s.roles || []).forEach(r => activeRoles.add(r));
   if (s.lang) currentLang = s.lang;
 } catch(e) {}
 
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify({ checks: state, roles: [...activeRoles], lang: currentLang })); } catch(e) {}
+  try { localStorage.setItem(KEY, JSON.stringify({ checks: state, timerDurations, timerEndTimes, roles: [...activeRoles], lang: currentLang })); } catch(e) {}
 }
 
 // ─── LANGUAGE ────────────────────────────────────────────────────────────────
@@ -681,6 +729,7 @@ function showChecklist() {
   const visIds = getVisibleIds();
   buildPhases(visIds);
   updateUI(visIds);
+  restoreTimers();
 }
 
 function getVisibleIds() {
@@ -712,7 +761,21 @@ function buildPhases(visibleIds) {
           <span class="sub-chevron">▾</span>
         </summary>
         <div class="sub-body">
-          ${s.tasks.map(task => `
+          ${s.tasks.map(task => task.counter ? `
+            <div class="task timer-task" id="row-${task.id}">
+              <div class="timer-top">
+                <span class="timer-check" id="tc-${task.id}">✓</span>
+                <span class="timer-label" id="tl-${task.id}">${task.text}</span>
+                <span class="timer-badge pending" id="tb-${task.id}"></span>
+                <button class="timer-gear" data-gear="${task.id}" title="Timer einstellen">⚙️</button>
+              </div>
+              <div class="timer-settings" id="ts-${task.id}">
+                <label>Interval:</label>
+                <input type="number" id="ti-${task.id}" min="1" max="999" value="${timerDurations[task.id]||30}">
+                <span>Min</span>
+                <button class="timer-set-btn" data-set="${task.id}">OK</button>
+              </div>
+            </div>` : `
             <div class="task${task.imp ? " imp" : ""}${state[task.id] ? " done" : ""}" id="row-${task.id}">
               <label for="cb-${task.id}">
                 <input type="checkbox" id="cb-${task.id}" data-id="${task.id}"${state[task.id] ? " checked" : ""}>
@@ -745,6 +808,143 @@ function buildPhases(visibleIds) {
     save();
     updateUI(getVisibleIds());
   });
+
+  container.addEventListener("click", e => {
+    // Timer check toggle
+    const check = e.target.closest(".timer-check");
+    if (check) {
+      const id = check.id.replace("tc-", "");
+      toggleTimer(id);
+      return;
+    }
+    // Timer label click also toggles
+    const lbl = e.target.closest(".timer-label");
+    if (lbl) {
+      const id = lbl.id.replace("tl-", "");
+      toggleTimer(id);
+      return;
+    }
+    // Gear button
+    const gear = e.target.closest("[data-gear]");
+    if (gear) {
+      const id = gear.dataset.gear;
+      const settings = document.getElementById("ts-" + id);
+      if (settings) settings.classList.toggle("open");
+      return;
+    }
+    // Set timer duration
+    const setBtn = e.target.closest("[data-set]");
+    if (setBtn) {
+      const id = setBtn.dataset.set;
+      const input = document.getElementById("ti-" + id);
+      const mins = Math.max(1, parseInt(input.value) || 30);
+      timerDurations[id] = mins;
+      input.value = mins;
+      save();
+      // If timer is running, restart it
+      if (activeTimers[id]) {
+        clearInterval(activeTimers[id]);
+        delete activeTimers[id];
+        startTimer(id, mins);
+      } else {
+        updateTimerBadge(id);
+      }
+      document.getElementById("ts-" + id).classList.remove("open");
+      return;
+    }
+  });
+}
+
+function toggleTimer(id) {
+  const check = document.getElementById("tc-" + id);
+  if (!check) return;
+  if (activeTimers[id]) {
+    // Already running – reset
+    clearInterval(activeTimers[id]);
+    delete activeTimers[id];
+    delete timerEndTimes[id];
+    check.classList.remove("active");
+    updateTimerBadge(id);
+  } else {
+    // Start timer
+    const mins = timerDurations[id] || 30;
+    check.classList.add("active");
+    startTimer(id, mins);
+  }
+  save();
+}
+
+function startTimer(id, mins) {
+  const endTime = Date.now() + mins * 60 * 1000;
+  timerEndTimes[id] = endTime;
+  save();
+  updateTimerBadge(id);
+  activeTimers[id] = setInterval(() => {
+    const remaining = timerEndTimes[id] - Date.now();
+    if (remaining <= 0) {
+      clearInterval(activeTimers[id]);
+      delete activeTimers[id];
+      delete timerEndTimes[id];
+      const check = document.getElementById("tc-" + id);
+      if (check) check.classList.remove("active");
+      updateTimerBadge(id);
+      save();
+    } else {
+      updateTimerBadge(id);
+    }
+  }, 10000); // update every 10 seconds
+}
+
+function updateTimerBadge(id) {
+  const badge = document.getElementById("tb-" + id);
+  if (!badge) return;
+  const mins = timerDurations[id] || 30;
+  if (!timerEndTimes[id] || !activeTimers[id]) {
+    badge.className = "timer-badge pending";
+    badge.textContent = mins + " Min";
+    return;
+  }
+  const remaining = Math.max(0, timerEndTimes[id] - Date.now());
+  const remMins = Math.ceil(remaining / 60000);
+  if (remaining <= 0) {
+    badge.className = "timer-badge overdue";
+    badge.textContent = currentLang === "de" ? "Überfällig!" : currentLang === "en" ? "Overdue!" : "Хугацаа дууссан!";
+  } else if (remaining < 5 * 60000) {
+    badge.className = "timer-badge soon";
+    badge.textContent = currentLang === "de" ? "in " + remMins + " Min" : "in " + remMins + " min";
+  } else {
+    badge.className = "timer-badge active";
+    badge.textContent = remMins + " Min";
+  }
+}
+
+function restoreTimers() {
+  const now = Date.now();
+  Object.keys(timerEndTimes).forEach(id => {
+    const check = document.getElementById("tc-" + id);
+    if (!check) return;
+    if (timerEndTimes[id] > now) {
+      check.classList.add("active");
+      const remaining = timerEndTimes[id] - now;
+      activeTimers[id] = setInterval(() => {
+        const rem = timerEndTimes[id] - Date.now();
+        if (rem <= 0) {
+          clearInterval(activeTimers[id]);
+          delete activeTimers[id];
+          delete timerEndTimes[id];
+          if (check) check.classList.remove("active");
+          updateTimerBadge(id);
+          save();
+        } else {
+          updateTimerBadge(id);
+        }
+      }, 10000);
+      updateTimerBadge(id);
+    } else {
+      delete timerEndTimes[id];
+      save();
+    }
+  });
 }
 
 function rebuildPhases() {
@@ -752,6 +952,7 @@ function rebuildPhases() {
   const visIds = getVisibleIds();
   buildPhases(visIds);
   updateUI(visIds);
+  restoreTimers();
 }
 
 function updateUI(visibleIds) {
@@ -761,8 +962,12 @@ function updateUI(visibleIds) {
     if (!visibleIds.has(p.id)) return;
     let pDone = 0, pTotal = 0;
     p.subs.forEach(s => {
-      let sDone = 0;
+      let sDone = 0, sTotal = 0;
       s.tasks.forEach(task => {
+        if (task.counter) {
+          updateTimerBadge(task.id);
+          return;
+        }
         const cb = document.getElementById("cb-" + task.id);
         const row = document.getElementById("row-" + task.id);
         if (!cb || !row) return;
@@ -770,25 +975,29 @@ function updateUI(visibleIds) {
         cb.checked = checked;
         row.classList.toggle("done", checked);
         if (checked) { sDone++; pDone++; totalDone++; }
-        pTotal++;
+        pTotal++; sTotal++;
       });
       const sp = document.getElementById("sp-" + s.id);
-      if (sp) { sp.textContent = sDone+"/"+s.tasks.length; sp.className = "sub-prog"+(sDone===s.tasks.length?" done":""); }
+      if (sp) {
+        if (sTotal === 0) { sp.textContent = ""; }
+        else { sp.textContent = sDone+"/"+sTotal; sp.className = "sub-prog"+(sDone===sTotal?" done":""); }
+      }
     });
     total += pTotal;
     const pct = pTotal ? Math.round(pDone/pTotal*100) : 0;
     const pf = document.getElementById("pf-"+p.id);
     const pl = document.getElementById("pl-"+p.id);
     if (pf) pf.style.width = pct+"%";
-    if (pl) { pl.textContent = pDone+" / "+pTotal; pl.className = "ph-prog-label"+(pDone===pTotal&&pTotal>0?" all-done":""); }
+    if (pl) { pl.textContent = pTotal > 0 ? pDone+" / "+pTotal : ""; pl.className = "ph-prog-label"+(pDone===pTotal&&pTotal>0?" all-done":""); }
   });
   document.getElementById("prog-num").textContent = totalDone+" / "+total;
   document.getElementById("prog-fill").style.width = total ? Math.round(totalDone/total*100)+"%" : "0%";
 }
 
 function resetAll() {
-  if (!confirm(currentLang==="de"?"Wirklich alle Häkchen entfernen?":currentLang==="en"?"Really reset all checkboxes?":"Бүх тэмдэглэгээг устгах уу?")) return;
-  state = {}; save();
+  if (!confirm(currentLang==="de"?"Wirklich alle Häkchen und Timer zurücksetzen?":currentLang==="en"?"Really reset everything?":"Бүгдийг дахин тохируулах уу?")) return;
+  Object.values(activeTimers).forEach(t => clearInterval(t));
+  activeTimers = {}; timerEndTimes = {}; state = {}; save();
   rebuildPhases();
 }
 
